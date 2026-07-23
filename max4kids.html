@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>NARTA — Преміальні санки для дітей та родини | Доставка по Україні</title>
+<meta name="description" content="NARTA — преміальні дитячі санки з ергономічною спинкою, гарантією 24 місяці та доставкою Новою Поштою за 1-3 дні. Обирайте модель та замовляйте онлайн.">
+<link rel="canonical" href="https://narta.ua/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="NARTA — Санки, які створюють спогади на все зимове дитинство">
+<meta property="og:description" content="Преміальні дитячі санки: безпечні, теплі та надійні. Гарантія 24 місяці, доставка по всій Україні за 1-3 дні.">
+<meta property="og:image" content="https://picsum.photos/seed/narta-og/1200/630">
+<meta property="og:locale" content="uk_UA">
+<meta property="og:url" content="https://narta.ua/">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="NARTA — Санки для дітей та родини">
+<meta name="twitter:description" content="Преміальні дитячі санки з гарантією 24 місяці. Доставка по всій Україні за 1-3 дні.">
+<meta name="twitter:image" content="https://picsum.photos/seed/narta-og/1200/630">
+
+<!-- Preconnects for performance -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://picsum.photos">
+
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,500&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+
+<!-- Swiper -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.4/swiper-bundle.min.css">
+
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink:   '#1C2B39',
+          paper: '#FFFFFF',
+          frost: '#F3F6F8',
+          frost2:'#E8EEF1',
+          action:'#D6483C',
+          actiondark:'#B93A2F',
+          trust: '#2E6E9E',
+          mint:  '#DCEEF2',
+        },
+        fontFamily: {
+          display: ['"Fraunces"', 'serif'],
+          body: ['"Manrope"', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        borderRadius: {
+          'xl2': '1.75rem',
+        }
+      }
+    }
+  }
+</script>
+
+<!-- Schema.org structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {"@type":"ListItem","position":1,"item":{"@type":"Product","name":"NARTA Nordic Lux","description":"Дитячі санки з м'якою високою спинкою та підголівником.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"1290","availability":"https://schema.org/InStock"}}},
+    {"@type":"ListItem","position":2,"item":{"@type":"Product","name":"NARTA Snow Cruiser","description":"Санки з кермом та гальмом для керування.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"1450","availability":"https://schema.org/InStock"}}},
+    {"@type":"ListItem","position":3,"item":{"@type":"Product","name":"NARTA Alpin Comfort","description":"Санки з ортопедичною спинкою для довгих прогулянок.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"1190","availability":"https://schema.org/InStock"}}},
+    {"@type":"ListItem","position":4,"item":{"@type":"Product","name":"NARTA Baby Snow","description":"Санки для малюків від 1 року з ременем безпеки.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"990","availability":"https://schema.org/InStock"}}},
+    {"@type":"ListItem","position":5,"item":{"@type":"Product","name":"NARTA Ice Runner","description":"Легкі спортивні санки вагою 2.5 кг.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"1090","availability":"https://schema.org/InStock"}}},
+    {"@type":"ListItem","position":6,"item":{"@type":"Product","name":"NARTA Family Sledge XL","description":"Санки на двох, витримують до 120 кг.","offers":{"@type":"Offer","priceCurrency":"UAH","price":"1690","availability":"https://schema.org/InStock"}}}
+  ]
+}
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Manrope', sans-serif; color: #1C2B39; background: #FFFFFF; }
+  h1,h2,h3, .font-display { font-family: 'Fraunces', serif; }
+  .font-mono-num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+
+  /* Reduced motion respect */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; }
+  }
+
+  /* Visible focus states */
+  a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 3px solid #2E6E9E;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  [x-cloak] { display: none !important; }
+
+  /* Sled-track signature divider */
+  .track-divider { display: block; width: 100%; height: 48px; }
+  .track-path {
+    fill: none;
+    stroke: #2E6E9E;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 10 12;
+    opacity: 0.35;
+  }
+
+  /* Phone input mask spacing */
+  input[type="tel"] { letter-spacing: 0.02em; }
+
+  .price-old { text-decoration: line-through; text-decoration-color: #B0BAC2; }
+
+  /* Swiper pagination color */
+  .swiper-pagination-bullet-active { background: #D6483C !important; }
+</style>
+</head>
+
+<body class="bg-paper text-ink antialiased">
+
+<a href="#models" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Перейти до моделей санок</a>
+
+<div x-data="app()" x-init="init()" x-cloak class="relative">
+
+  <!-- ============ HEADER ============ -->
+  <header class="sticky top-0 z-40 bg-paper/90 backdrop-blur border-b border-frost2">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <a href="#top" class="font-display font-800 text-2xl tracking-tight text-ink" aria-label="NARTA — на головну">
+        NART<span class="text-action">A</span>
+      </a>
+      <a href="tel:+380441234567" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-trust" aria-label="Подзвонити нам">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.4 21 3 13.6 3 4.9c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z" stroke="#2E6E9E" stroke-width="1.6"/></svg>
+        +380 44 123 45 67
+      </a>
+      <button @click="openOrder(null)" class="rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white text-sm font-bold px-5 py-2.5 min-h-[44px]">
+        Замовити
+      </button>
+    </div>
+  </header>
+
+  <!-- ============ 1. HERO ============ -->
+  <section id="top" class="relative overflow-hidden bg-frost">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-10 sm:pt-14 sm:pb-16 grid sm:grid-cols-2 gap-8 items-center">
+      <div class="order-2 sm:order-1" x-data="{shown:false}" x-init="setTimeout(()=>shown=true, 80)">
+        <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-trust bg-mint rounded-full px-3 py-1.5 mb-4">
+          <span class="w-1.5 h-1.5 rounded-full bg-trust"></span> Зимовий сезон 2026 вже тут
+        </p>
+        <h1 class="font-display font-700 text-[2.1rem] leading-[1.08] sm:text-5xl sm:leading-[1.05] text-ink transition-all duration-700"
+            :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'">
+          Санки, які створюють <span class="italic text-action">спогади</span> на все зимове дитинство
+        </h1>
+        <p class="mt-4 text-base sm:text-lg text-ink/70 max-w-md transition-all duration-700 delay-100"
+           :class="shown ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'">
+          Преміальні санки для дітей та всієї родини — надійні, теплі та безпечні. Доставка по всій Україні за 1–3 дні.
+        </p>
+
+        <ul class="mt-6 space-y-3">
+          <li class="flex items-start gap-3 text-sm sm:text-base text-ink/85">
+            <svg class="mt-0.5 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#DCEEF2"/><path d="M7 12.5l3 3 7-7" stroke="#2E6E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Витримують до 90 кг — катаються і діти, і дорослі
+          </li>
+          <li class="flex items-start gap-3 text-sm sm:text-base text-ink/85">
+            <svg class="mt-0.5 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#DCEEF2"/><path d="M7 12.5l3 3 7-7" stroke="#2E6E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            М'яка спинка — дитині тепло й зручно навіть у мороз
+          </li>
+          <li class="flex items-start gap-3 text-sm sm:text-base text-ink/85">
+            <svg class="mt-0.5 shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="11" fill="#DCEEF2"/><path d="M7 12.5l3 3 7-7" stroke="#2E6E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Гарантія 24 місяці на раму та полозки
+          </li>
+        </ul>
+
+        <div class="mt-7 flex flex-col sm:flex-row gap-3">
+          <a href="#models" class="min-h-[44px] inline-flex items-center justify-center rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white font-bold px-7 py-3.5 text-base shadow-lg shadow-action/20">
+            Обрати санки
+          </a>
+          <a href="tel:+380441234567" class="min-h-[44px] inline-flex items-center justify-center gap-2 rounded-full border-2 border-ink/15 hover:border-trust transition text-ink font-semibold px-6 py-3.5 text-base">
+            Зателефонувати нам
+          </a>
+        </div>
+      </div>
+
+      <div class="order-1 sm:order-2 relative">
+        <img src="https://picsum.photos/seed/narta-hero/800/900" alt="Дитина катається на санках NARTA засніженим схилом узимку" width="800" height="900" class="w-full h-[280px] sm:h-[440px] object-cover rounded-xl2 shadow-xl" loading="eager" fetchpriority="high">
+        <div class="absolute -bottom-4 -left-4 sm:-left-6 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-3">
+          <div class="flex text-action" aria-hidden="true">★★★★★</div>
+          <div class="text-xs text-ink/70 leading-tight">
+            <span class="font-bold text-ink block">4.9 / 5</span>
+            понад 1200 родин
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sled-track signature divider -->
+    <svg class="track-divider" viewBox="0 0 400 48" preserveAspectRatio="none" aria-hidden="true">
+      <path class="track-path" d="M0 24 Q 50 4, 100 24 T 200 24 T 300 24 T 400 24" />
+    </svg>
+  </section>
+
+  <!-- ============ 2. WHY CHOOSE ============ -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <div class="max-w-lg mb-9">
+      <h2 class="font-display font-700 text-2xl sm:text-3xl text-ink">Чому батьки обирають NARTA</h2>
+      <p class="mt-2 text-ink/65">Не просто санки — продумана деталь зимового дитинства вашої дитини.</p>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="bg-frost rounded-xl2 p-6">
+        <div class="w-11 h-11 rounded-full bg-mint flex items-center justify-center mb-4" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-3z" stroke="#2E6E9E" stroke-width="1.7"/></svg>
+        </div>
+        <h3 class="font-display font-700 text-lg mb-1.5">Безпека перш за все</h3>
+        <p class="text-sm text-ink/65 leading-relaxed">Заокруглені краї, нековзне сидіння та ремінь безпеки для наймолодших пасажирів.</p>
+      </div>
+      <div class="bg-frost rounded-xl2 p-6">
+        <div class="w-11 h-11 rounded-full bg-mint flex items-center justify-center mb-4" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 12h16M4 12l4-4M4 12l4 4M20 12l-4-4M20 12l-4 4" stroke="#2E6E9E" stroke-width="1.7" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="font-display font-700 text-lg mb-1.5">Легкі, але міцні</h3>
+        <p class="text-sm text-ink/65 leading-relaxed">Ударостійкий пластик та міцна рама витримують мороз до −30°C без деформацій.</p>
+      </div>
+      <div class="bg-frost rounded-xl2 p-6">
+        <div class="w-11 h-11 rounded-full bg-mint flex items-center justify-center mb-4" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.5-9.5-9C.5 8 3 4 7 4c2 0 3.6 1.2 5 3 1.4-1.8 3-3 5-3 4 0 6.5 4 4.5 8-2.5 4.5-9.5 9-9.5 9z" stroke="#2E6E9E" stroke-width="1.7"/></svg>
+        </div>
+        <h3 class="font-display font-700 text-lg mb-1.5">Зручно тягнути</h3>
+        <p class="text-sm text-ink/65 leading-relaxed">Ергономічна мотузка та зручна рукоятка не натирають руки навіть у довгій прогулянці.</p>
+      </div>
+      <div class="bg-frost rounded-xl2 p-6">
+        <div class="w-11 h-11 rounded-full bg-mint flex items-center justify-center mb-4" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 10h18M6 10V6a2 2 0 012-2h8a2 2 0 012 2v4M4 10v9a1 1 0 001 1h14a1 1 0 001-1v-9" stroke="#2E6E9E" stroke-width="1.7"/></svg>
+        </div>
+        <h3 class="font-display font-700 text-lg mb-1.5">Швидка доставка</h3>
+        <p class="text-sm text-ink/65 leading-relaxed">Новою Поштою у будь-яке місто за 1–3 дні. Оплата — при отриманні.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 & 4. BEST-SELLING MODELS + EXPAND ============ -->
+  <section id="models" class="bg-frost py-12 sm:py-16">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <div class="max-w-lg mb-9">
+        <h2 class="font-display font-700 text-2xl sm:text-3xl text-ink">Санки, що розкуповують найшвидше</h2>
+        <p class="mt-2 text-ink/65">Оберіть колір і побачте, як модель виглядатиме на вашому подвір'ї.</p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-6">
+        <template x-for="(p, idx) in products.slice(0,2)" :key="p.id">
+          <div x-html="productCardTemplate(p, idx)"></div>
+        </template>
+      </div>
+
+      <!-- Expandable extra models -->
+      <div class="grid sm:grid-cols-2 gap-6 mt-6 overflow-hidden transition-all duration-500 ease-out"
+           :style="expanded ? 'max-height:3000px; opacity:1; margin-top:1.5rem' : 'max-height:0px; opacity:0; margin-top:0rem'"
+           id="extra-models">
+        <template x-for="(p, idx) in products.slice(2,6)" :key="p.id">
+          <div x-html="productCardTemplate(p, idx+2)"></div>
+        </template>
+      </div>
+
+      <div class="mt-8 flex justify-center">
+        <button @click="toggleExpand()" class="inline-flex items-center gap-2 min-h-[44px] rounded-full bg-white border-2 border-ink/10 hover:border-trust transition font-semibold px-6 py-3 text-sm sm:text-base" :aria-expanded="expanded.toString()" aria-controls="extra-models">
+          <span x-text="expanded ? 'Сховати каталог' : 'Показати ще моделі'"></span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-transform duration-300" :class="expanded ? 'rotate-180' : ''" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#1C2B39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. TRUST ============ -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <h2 class="font-display font-700 text-2xl sm:text-3xl text-ink mb-9 max-w-lg">Чому нам довіряють тисячі родин</h2>
+    <div class="grid grid-cols-2 lg:grid-cols-5 gap-5">
+      <div class="text-center sm:text-left">
+        <div class="w-10 h-10 mx-auto sm:mx-0 rounded-full bg-mint flex items-center justify-center mb-3" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z" stroke="#2E6E9E" stroke-width="1.6"/></svg>
+        </div>
+        <h3 class="font-bold text-sm mb-1">Доставка</h3>
+        <p class="text-xs text-ink/60">Нова Пошта, 1–3 дні по всій Україні</p>
+      </div>
+      <div class="text-center sm:text-left">
+        <div class="w-10 h-10 mx-auto sm:mx-0 rounded-full bg-mint flex items-center justify-center mb-3" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="12" rx="2" stroke="#2E6E9E" stroke-width="1.6"/><path d="M3 10h18" stroke="#2E6E9E" stroke-width="1.6"/></svg>
+        </div>
+        <h3 class="font-bold text-sm mb-1">Оплата</h3>
+        <p class="text-xs text-ink/60">Готівка, картка або накладений платіж</p>
+      </div>
+      <div class="text-center sm:text-left">
+        <div class="w-10 h-10 mx-auto sm:mx-0 rounded-full bg-mint flex items-center justify-center mb-3" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 5-3.4 8.4-7 10-3.6-1.6-7-5-7-10V6l7-3z" stroke="#2E6E9E" stroke-width="1.6"/></svg>
+        </div>
+        <h3 class="font-bold text-sm mb-1">Гарантія</h3>
+        <p class="text-xs text-ink/60">24 місяці на раму та кріплення</p>
+      </div>
+      <div class="text-center sm:text-left">
+        <div class="w-10 h-10 mx-auto sm:mx-0 rounded-full bg-mint flex items-center justify-center mb-3" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 1114 5.3M4 12v5h5" stroke="#2E6E9E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-bold text-sm mb-1">Повернення</h3>
+        <p class="text-xs text-ink/60">14 днів на обмін або повернення</p>
+      </div>
+      <div class="text-center sm:text-left col-span-2 sm:col-span-1">
+        <div class="w-10 h-10 mx-auto sm:mx-0 rounded-full bg-mint flex items-center justify-center mb-3" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 12.5l3 3 7-7" stroke="#2E6E9E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="9.5" stroke="#2E6E9E" stroke-width="1.6"/></svg>
+        </div>
+        <h3 class="font-bold text-sm mb-1">Якість</h3>
+        <p class="text-xs text-ink/60">Матеріали сертифіковані для дитячих товарів</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6. REVIEWS ============ -->
+  <section class="bg-ink py-12 sm:py-16 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+      <h2 class="font-display font-700 text-2xl sm:text-3xl text-white mb-9 max-w-lg">Що кажуть батьки</h2>
+    </div>
+    <div class="swiper reviews-swiper max-w-6xl mx-auto px-4 sm:px-6" role="region" aria-label="Відгуки клієнтів">
+      <div class="swiper-wrapper pb-10">
+        <div class="swiper-slide h-auto">
+          <div class="bg-white rounded-xl2 p-6 h-full flex flex-col">
+            <div class="flex items-center gap-3 mb-3">
+              <img src="https://picsum.photos/seed/oksana/64/64" alt="" width="44" height="44" class="rounded-full" loading="lazy">
+              <div>
+                <p class="font-bold text-sm">Оксана, Київ</p>
+                <p class="text-xs text-ink/50">12 січня 2026</p>
+              </div>
+            </div>
+            <div class="text-action text-sm mb-2" aria-label="Оцінка 5 з 5 зірок">★★★★★</div>
+            <p class="text-sm text-ink/75 leading-relaxed">Замовляли Nordic Lux для доньки — санки просто чудові! Спинка м'яка, дитина не мерзне навіть у −15. Приїхали за 2 дні.</p>
+          </div>
+        </div>
+        <div class="swiper-slide h-auto">
+          <div class="bg-white rounded-xl2 p-6 h-full flex flex-col">
+            <div class="flex items-center gap-3 mb-3">
+              <img src="https://picsum.photos/seed/andriy/64/64" alt="" width="44" height="44" class="rounded-full" loading="lazy">
+              <div>
+                <p class="font-bold text-sm">Андрій, Львів</p>
+                <p class="text-xs text-ink/50">3 лютого 2026</p>
+              </div>
+            </div>
+            <div class="text-action text-sm mb-2" aria-label="Оцінка 5 з 5 зірок">★★★★★</div>
+            <p class="text-sm text-ink/75 leading-relaxed">Взяв Snow Cruiser синові — він у захваті від керма, каже, що це як справжня машина. Якість на висоті.</p>
+          </div>
+        </div>
+        <div class="swiper-slide h-auto">
+          <div class="bg-white rounded-xl2 p-6 h-full flex flex-col">
+            <div class="flex items-center gap-3 mb-3">
+              <img src="https://picsum.photos/seed/maryna/64/64" alt="" width="44" height="44" class="rounded-full" loading="lazy">
+              <div>
+                <p class="font-bold text-sm">Марина, Одеса</p>
+                <p class="text-xs text-ink/50">20 грудня 2025</p>
+              </div>
+            </div>
+            <div class="text-action text-sm mb-2" aria-label="Оцінка 5 з 5 зірок">★★★★★</div>
+            <p class="text-sm text-ink/75 leading-relaxed">Baby Snow для молодшої — ремені безпеки надійні, я спокійна, поки катаю її з гірки.</p>
+          </div>
+        </div>
+        <div class="swiper-slide h-auto">
+          <div class="bg-white rounded-xl2 p-6 h-full flex flex-col">
+            <div class="flex items-center gap-3 mb-3">
+              <img src="https://picsum.photos/seed/ihor/64/64" alt="" width="44" height="44" class="rounded-full" loading="lazy">
+              <div>
+                <p class="font-bold text-sm">Ігор, Дніпро</p>
+                <p class="text-xs text-ink/50">15 січня 2026</p>
+              </div>
+            </div>
+            <div class="text-action text-sm mb-2" aria-label="Оцінка 4 з 5 зірок">★★★★☆</div>
+            <p class="text-sm text-ink/75 leading-relaxed">Family Sledge XL — катаємось разом із сином, витримує нас обох без проблем. Рекомендую!</p>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination mt-2"></div>
+    </div>
+  </section>
+
+  <!-- ============ 7. FAQ ============ -->
+  <section class="max-w-3xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
+    <h2 class="font-display font-700 text-2xl sm:text-3xl text-ink mb-8">Часті запитання</h2>
+    <div class="divide-y divide-frost2 border-y border-frost2">
+      <template x-for="(item, i) in faq" :key="i">
+        <div>
+          <button @click="faqOpen = faqOpen === i ? null : i" class="w-full min-h-[44px] flex items-center justify-between gap-4 py-4 text-left" :aria-expanded="(faqOpen === i).toString()" :aria-controls="'faq-panel-' + i">
+            <span class="font-semibold text-sm sm:text-base" x-text="item.q"></span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="shrink-0 transition-transform duration-300" :class="faqOpen === i ? 'rotate-45' : ''" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="#2E6E9E" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <div :id="'faq-panel-' + i" x-show="faqOpen === i" x-collapse.duration.300ms x-cloak class="pb-4 text-sm text-ink/65 leading-relaxed" x-text="item.a"></div>
+        </div>
+      </template>
+    </div>
+  </section>
+
+  <!-- ============ 8. FINAL CTA ============ -->
+  <section class="bg-mint/40 py-12 sm:py-16">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+      <h2 class="font-display font-700 text-2xl sm:text-4xl text-ink mb-3">Зима не чекає — обирайте санки вже сьогодні</h2>
+      <p class="text-ink/65 mb-8">Залиште номер телефону — передзвонимо протягом 15 хвилин і допоможемо обрати модель.</p>
+
+      <form class="max-w-md mx-auto flex flex-col sm:flex-row gap-3" @submit.prevent="openOrder(null)">
+        <label for="cta-phone" class="sr-only">Ваш номер телефону</label>
+        <input id="cta-phone" type="tel" inputmode="tel" x-model="ctaPhone" @input="formatPhone($event, 'ctaPhone')" placeholder="+380 __ ___ __ __" class="flex-1 min-h-[44px] rounded-full border-2 border-ink/15 focus:border-trust px-5 py-3 text-sm outline-none">
+        <button type="submit" class="min-h-[44px] rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white font-bold px-7 py-3 text-sm sm:text-base whitespace-nowrap">
+          Замовити дзвінок
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ============ 9. FOOTER ============ -->
+  <footer class="bg-ink text-white/70 py-10">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 grid sm:grid-cols-3 gap-8 text-sm">
+      <div>
+        <p class="font-display font-700 text-xl text-white mb-2">NART<span class="text-action">A</span></p>
+        <p>Преміальні санки для дітей та родини.</p>
+      </div>
+      <div>
+        <p class="text-white font-semibold mb-2">Контакти</p>
+        <p><a href="tel:+380441234567" class="hover:text-white transition">+380 44 123 45 67</a></p>
+        <p><a href="mailto:hello@narta.ua" class="hover:text-white transition">hello@narta.ua</a></p>
+        <p>Київ, вул. Зимова, 10</p>
+      </div>
+      <div>
+        <p class="text-white font-semibold mb-2">Ми в соцмережах</p>
+        <div class="flex gap-3">
+          <a href="#" aria-label="NARTA в Instagram" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">IG</a>
+          <a href="#" aria-label="NARTA у Telegram" class="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">TG</a>
+        </div>
+      </div>
+    </div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 mt-8 pt-6 border-t border-white/10 text-xs text-white/40">
+      © 2026 NARTA. Всі права захищені.
+    </div>
+  </footer>
+
+  <!-- ============ STICKY CTA (mobile) ============ -->
+  <div x-show="showSticky && !orderOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full" x-cloak class="fixed bottom-0 inset-x-0 z-40 sm:hidden bg-white border-t border-frost2 px-4 py-3 flex items-center gap-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));">
+    <div class="flex-1 min-w-0">
+      <p class="text-xs text-ink/50 leading-tight">від</p>
+      <p class="font-mono-num font-bold text-lg leading-tight">990 ₴</p>
+    </div>
+    <a href="#models" class="flex-1 text-center min-h-[44px] flex items-center justify-center rounded-full border-2 border-ink/15 font-semibold text-sm px-4">Каталог</a>
+    <button @click="openOrder(null)" class="flex-1 min-h-[44px] rounded-full bg-action text-white font-bold text-sm px-4">Замовити</button>
+  </div>
+
+  <!-- ============ ORDER MODAL ============ -->
+  <div x-show="orderOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="order-modal-title" @keydown.escape.window="orderOpen=false">
+    <div x-show="orderOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-ink/50" @click="orderOpen=false"></div>
+
+    <div x-show="orderOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 translate-y-8 sm:scale-95" class="relative bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-xl2 p-6 sm:p-7 max-h-[92vh] overflow-y-auto">
+      <button @click="orderOpen=false" aria-label="Закрити форму замовлення" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-frost flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#1C2B39" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+
+      <h2 id="order-modal-title" class="font-display font-700 text-xl mb-4">Оформлення замовлення</h2>
+
+      <template x-if="selectedProduct">
+        <div class="flex items-center gap-3 bg-frost rounded-xl p-3 mb-5">
+          <img :src="selectedImage" :alt="selectedProduct ? selectedProduct.name : ''" width="64" height="64" class="w-16 h-16 rounded-lg object-cover">
+          <div class="min-w-0">
+            <p class="font-bold text-sm truncate" x-text="selectedProduct.name"></p>
+            <p class="text-xs text-ink/55" x-text="'Колір: ' + selectedColorName"></p>
+            <p class="font-mono-num text-sm font-bold text-action" x-text="selectedProduct.price + ' ₴'"></p>
+          </div>
+        </div>
+      </template>
+
+      <form @submit.prevent="submitOrder()" class="space-y-4">
+        <div>
+          <label for="order-name" class="block text-xs font-semibold text-ink/70 mb-1.5">Ім'я</label>
+          <input id="order-name" type="text" x-model="form.name" required autocomplete="name" placeholder="Ваше ім'я" class="w-full min-h-[44px] rounded-xl border-2 border-ink/15 focus:border-trust px-4 py-2.5 text-sm outline-none">
+        </div>
+        <div>
+          <label for="order-phone" class="block text-xs font-semibold text-ink/70 mb-1.5">Телефон</label>
+          <input id="order-phone" type="tel" inputmode="tel" x-model="form.phone" @input="formatPhone($event, 'phone')" required placeholder="+380 __ ___ __ __" class="w-full min-h-[44px] rounded-xl border-2 border-ink/15 focus:border-trust px-4 py-2.5 text-sm outline-none">
+        </div>
+        <button type="submit" class="w-full min-h-[48px] rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white font-bold py-3.5 text-base">
+          Підтвердити замовлення
+        </button>
+        <p class="text-[11px] text-ink/45 text-center leading-relaxed">Натискаючи кнопку, ви погоджуєтесь на обробку персональних даних відповідно до політики конфіденційності.</p>
+      </form>
+
+      <template x-if="justSubmitted">
+        <div class="mt-4 rounded-xl bg-mint/60 text-trust text-sm font-semibold text-center py-3">
+          Дякуємо! Ми зателефонуємо вам найближчим часом 🎉
+        </div>
+      </template>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ SCRIPTS ============ -->
+<script src="https://unpkg.com/@alpinejs/collapse@3.14.1/dist/cdn.min.js" defer></script>
+<script src="https://unpkg.com/alpinejs@3.14.1/dist/cdn.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.4/swiper-bundle.min.js"></script>
+
+<script>
+function app() {
+  return {
+    expanded: false,
+    orderOpen: false,
+    showSticky: false,
+    faqOpen: null,
+    ctaPhone: '',
+    justSubmitted: false,
+    selectedProduct: null,
+    selectedColorName: '',
+    selectedImage: '',
+    form: { name: '', phone: '' },
+
+    products: [
+      { id:'nordic-lux', name:'NARTA Nordic Lux', tagline:"Класика з м'якою спинкою", desc:"Просторе сидіння з високою спинкою і м'яким підголівником — дитині тепло навіть у сильний мороз.", price:1290, oldPrice:1590,
+        colors:[ {name:'Червоний', hex:'#D6483C', seed:'nordic-lux-red'}, {name:'Синій', hex:'#2E6E9E', seed:'nordic-lux-blue'}, {name:'Зелений', hex:'#3E8E63', seed:'nordic-lux-green'} ] },
+      { id:'snow-cruiser', name:'NARTA Snow Cruiser', tagline:'З кермом для керування', desc:'Санки з рульовим керуванням та гальмом — дитина сама обирає напрямок і безпечно гальмує.', price:1450, oldPrice:1790,
+        colors:[ {name:'Червоний', hex:'#D6483C', seed:'snow-cruiser-red'}, {name:'Жовтий', hex:'#E0A83E', seed:'snow-cruiser-yellow'}, {name:'Синій', hex:'#2E6E9E', seed:'snow-cruiser-blue'} ] },
+      { id:'alpin-comfort', name:'NARTA Alpin Comfort', tagline:'Ортопедична спинка', desc:'Анатомічна спинка знімає навантаження зі спини — підходить для довгих зимових прогулянок.', price:1190, oldPrice:1450,
+        colors:[ {name:'Сірий', hex:'#7C8A94', seed:'alpin-comfort-gray'}, {name:'Синій', hex:'#2E6E9E', seed:'alpin-comfort-blue'}, {name:'Червоний', hex:'#D6483C', seed:'alpin-comfort-red'} ] },
+      { id:'baby-snow', name:'NARTA Baby Snow', tagline:'Для малюків від 1 року', desc:"П'ятиточковий ремінь безпеки та бортики надійно фіксують малюка під час поїздки.", price:990, oldPrice:1250,
+        colors:[ {name:'Рожевий', hex:'#E38FA5', seed:'baby-snow-pink'}, {name:'Синій', hex:'#2E6E9E', seed:'baby-snow-blue'}, {name:'М\'ятний', hex:'#5FB8AE', seed:'baby-snow-mint'} ] },
+      { id:'ice-runner', name:'NARTA Ice Runner', tagline:'Легкі спортивні санки', desc:'Полегшена рама всього 2,5 кг — легко нести і котити, ідеально для активних дітей.', price:1090, oldPrice:1350,
+        colors:[ {name:'Чорний', hex:'#2B333A', seed:'ice-runner-black'}, {name:'Помаранчевий', hex:'#E07A3E', seed:'ice-runner-orange'}, {name:'Синій', hex:'#2E6E9E', seed:'ice-runner-blue'} ] },
+      { id:'family-xl', name:'NARTA Family Sledge XL', tagline:'На двох — з дитиною разом', desc:"Подовжене сидіння витримує до 120 кг — можна кататися разом із дитиною.", price:1690, oldPrice:1990,
+        colors:[ {name:'Червоний', hex:'#D6483C', seed:'family-xl-red'}, {name:'Сірий', hex:'#7C8A94', seed:'family-xl-gray'}, {name:'Зелений', hex:'#3E8E63', seed:'family-xl-green'} ] },
+    ],
+
+    faq: [
+      { q:'Скільки часу займає доставка?', a:'Зазвичай 1–3 дні по всій Україні через Нову Пошту, у будь-яке відділення або поштомат.' },
+      { q:'Чи можна оплатити при отриманні?', a:'Так, доступна оплата готівкою або карткою безпосередньо при отриманні на відділенні.' },
+      { q:'Яку вагу витримують санки?', a:'Залежно від моделі — від 50 до 120 кг. Точні дані вказані в описі кожної моделі вище.' },
+      { q:'Чи є гарантія на санки?', a:'Так, ми надаємо гарантію 24 місяці на раму та кріплення полозків.' },
+      { q:'Чи можна повернути або обміняти товар?', a:'Так, протягом 14 днів з моменту отримання за умови збереження товарного вигляду та упаковки.' },
+    ],
+
+    productImage(p, colorIdx) {
+      const c = p.colors[colorIdx];
+      return `https://picsum.photos/seed/${c.seed}/640/480`;
+    },
+
+    productCardTemplate(p, idx) {
+      const colorsHtml = p.colors.map((c, ci) => `
+        <button
+          type="button"
+          @click="setColor(${idx}, ${ci})"
+          class="w-8 h-8 rounded-full border-2 transition"
+          :class="colorIndex[${idx}] === ${ci} ? 'border-ink scale-110' : 'border-white shadow'"
+          style="background:${c.hex}"
+          aria-label="Колір: ${c.name}"
+          :aria-pressed="(colorIndex[${idx}] === ${ci}).toString()"
+        ></button>
+      `).join('');
+
+      return `
+      <article data-product data-idx="${idx}" x-data class="bg-white rounded-xl2 overflow-hidden shadow-sm hover:shadow-md transition group">
+        <div class="relative aspect-[4/3] overflow-hidden bg-frost2">
+          <img :src="productImage(products[${idx}], colorIndex[${idx}])" alt="${p.name} — ${p.tagline}" width="640" height="480" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+          <span class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
+            −${Math.round(100 - (p.price / p.oldPrice) * 100)}%
+          </span>
+        </div>
+        <div class="p-5">
+          <h3 class="font-display font-700 text-lg leading-snug">${p.name}</h3>
+          <p class="text-xs text-trust font-semibold mt-0.5 mb-2">${p.tagline}</p>
+          <p class="text-sm text-ink/60 leading-relaxed mb-4">${p.desc}</p>
+
+          <div class="flex items-center gap-2 mb-4" role="group" aria-label="Оберіть колір">
+            ${colorsHtml}
+          </div>
+          <p class="text-xs text-ink/50 mb-4">Обраний колір: <span class="font-semibold text-ink/80" x-text="products[${idx}].colors[colorIndex[${idx}]].name"></span></p>
+
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <span class="font-mono-num font-bold text-xl text-ink">${p.price} ₴</span>
+              <span class="font-mono-num text-sm text-ink/40 price-old ml-1.5">${p.oldPrice} ₴</span>
+            </div>
+            <button @click="openOrder(${idx})" class="min-h-[44px] rounded-full bg-ink hover:bg-trust transition text-white font-bold text-sm px-5">
+              Замовити
+            </button>
+          </div>
+        </div>
+      </article>`;
+    },
+
+    colorIndex: [0,0,0,0,0,0],
+
+    setColor(idx, ci) {
+      this.colorIndex[idx] = ci;
+    },
+
+    toggleExpand() {
+      this.expanded = !this.expanded;
+      if (this.expanded) {
+        this.$nextTick(() => {
+          const el = document.getElementById('extra-models');
+          if (el && window.gsap) {
+            gsap.to(window, { duration: 0.6, scrollTo: { y: el, offsetY: 90 }, ease: 'power2.out' });
+          } else if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+      }
+    },
+
+    openOrder(idx) {
+      if (idx !== null) {
+        const p = this.products[idx];
+        const ci = this.colorIndex[idx];
+        this.selectedProduct = p;
+        this.selectedColorName = p.colors[ci].name;
+        this.selectedImage = this.productImage(p, ci);
+      } else {
+        this.selectedProduct = null;
+        this.selectedColorName = '';
+        this.selectedImage = '';
+      }
+      this.justSubmitted = false;
+      this.orderOpen = true;
+    },
+
+    submitOrder() {
+      // Integration point: send form + selectedProduct to CRM / Telegram bot / Google Sheet here.
+      this.justSubmitted = true;
+      setTimeout(() => { this.orderOpen = false; }, 1600);
+    },
+
+    formatPhone(e, key) {
+      let digits = e.target.value.replace(/\D/g, '');
+      if (digits.startsWith('380')) digits = digits.slice(3);
+      digits = digits.slice(0, 9);
+      let out = '+380';
+      if (digits.length > 0) out += ' ' + digits.slice(0,2);
+      if (digits.length > 2) out += ' ' + digits.slice(2,5);
+      if (digits.length > 5) out += ' ' + digits.slice(5,7);
+      if (digits.length > 7) out += ' ' + digits.slice(7,9);
+      this[key] = out;
+      if (this.form && key === 'phone') this.form.phone = out;
+      if (key === 'ctaPhone') this.ctaPhone = out;
+    },
+
+    init() {
+      window.addEventListener('scroll', () => {
+        this.showSticky = window.scrollY > 480;
+      }, { passive: true });
+
+      this.$nextTick(() => {
+        if (window.gsap && window.ScrollTrigger) {
+          gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+          document.querySelectorAll('.track-path').forEach((path) => {
+            const len = path.getTotalLength ? path.getTotalLength() : 400;
+          });
+          gsap.utils.toArray('section').forEach((sec) => {
+            gsap.from(sec.querySelectorAll('h2'), {
+              opacity: 0, y: 16, duration: 0.6, ease: 'power2.out',
+              scrollTrigger: { trigger: sec, start: 'top 82%' }
+            });
+          });
+        }
+
+        if (window.Swiper) {
+          new Swiper('.reviews-swiper', {
+            slidesPerView: 1.15,
+            spaceBetween: 16,
+            breakpoints: {
+              640: { slidesPerView: 2.2 },
+              1024: { slidesPerView: 3.2 }
+            },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            a11y: { enabled: true },
+          });
+        }
+      });
+    }
+  }
+}
+</script>
+
+</body>
+</html>
