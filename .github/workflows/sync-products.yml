@@ -1,0 +1,36 @@
+name: Sync SalesDrive Products
+
+on:
+  schedule:
+    # Запуск щодня о 00:00 UTC (можеш змінити за бажанням)
+    - cron: '0 0 * * *'
+  # Дозволяє запускати процес вручну з вкладки Actions
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci || npm install
+
+      - name: Run sync script
+        env:
+          SALESDRIVE_YML_URL: ${{ secrets.SALESDRIVE_YML_URL }}
+        run: node sync-salesdrive-products.js
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add products.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-update products.json from SalesDrive" && git push)

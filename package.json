@@ -1,0 +1,8 @@
+{
+  "name": "salesdrive-sync",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "fast-xml-parser": "^4.3.0"
+  }
+}
