@@ -202,7 +202,7 @@
   <section class="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16">
     <div class="max-w-lg mb-9">
       <h2 class="font-display font-700 text-2xl sm:text-3xl text-ink">Чому батьки обирають Max4Kids</h2>
-      <p class="mt-2 text-ink/65">Не просто санки — продумана деталь зимового дитинства вашої дитини.</p>
+      <p class="mt-2 text-ink/65">Не просто санки — комфорт, безпека та море емоцій.</p>
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -255,7 +255,7 @@
       <div class="grid sm:grid-cols-2 gap-6 mt-6 overflow-hidden transition-all duration-500 ease-out"
            :style="expanded ? 'max-height:3000px; opacity:1; margin-top:1.5rem' : 'max-height:0px; opacity:0; margin-top:0rem'"
            id="extra-models">
-        <template x-for="(p, idx) in products.slice(2,6)" :key="p.id">
+        <template x-for="(p, idx) in products.slice(2)" :key="p.id">
           <div x-html="productCardTemplate(p, idx+2)"></div>
         </template>
       </div>
@@ -518,6 +518,8 @@ function app() {
     selectedImage: '',
     form: { name: '', phone: '' },
 
+    // Fallback-дані: показуються, поки не підвантажився products.json з CRM,
+    // або якщо підвантаження не вдалося (наприклад, немає інтернету).
     products: [
       { id:'nordic-lux', name:'Санки з колесами Патріот', tagline:"Ручшка-штовхач знімається та регулюється", desc:"чотири гумових колеса + 2 пластмасових колеса на полозах ззаду.", price:3520, oldPrice:3999,
         colors:[ {name:'Червоний', hex:'#D6483C', seed:'nordic-lux-red'}, {name:'Синій', hex:'#2E6E9E', seed:'nordic-lux-blue'}, {name:'Зелений', hex:'#3E8E63', seed:'nordic-lux-green'} ] },
@@ -543,7 +545,9 @@ function app() {
 
     productImage(p, colorIdx) {
       const c = p.colors[colorIdx];
-      return `https://picsum.photos/seed/${c.seed}/640/480`;
+      // Реальне фото кольору з CRM (products.json). Якщо його нема — заглушка для дев-режиму.
+      if (c.image) return c.image;
+      return `https://picsum.photos/seed/${c.seed || p.id}/640/480`;
     },
 
     productCardTemplate(p, idx) {
@@ -559,13 +563,18 @@ function app() {
         ></button>
       `).join('');
 
+      const hasDiscount = p.oldPrice > p.price;
+      const discountBadge = hasDiscount ? `
+          <span class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
+            −${Math.round(100 - (p.price / p.oldPrice) * 100)}%
+          </span>` : '';
+      const oldPriceHtml = hasDiscount ? `<span class="font-mono-num text-sm text-ink/40 price-old ml-1.5">${p.oldPrice} ₴</span>` : '';
+
       return `
       <article data-product data-idx="${idx}" x-data class="bg-white rounded-xl2 overflow-hidden shadow-sm hover:shadow-md transition group">
         <div class="relative aspect-[4/3] overflow-hidden bg-frost2">
           <img :src="productImage(products[${idx}], colorIndex[${idx}])" alt="${p.name} — ${p.tagline}" width="640" height="480" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-          <span class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
-            −${Math.round(100 - (p.price / p.oldPrice) * 100)}%
-          </span>
+          ${discountBadge}
         </div>
         <div class="p-5">
           <h3 class="font-display font-700 text-lg leading-snug">${p.name}</h3>
@@ -580,7 +589,7 @@ function app() {
           <div class="flex items-center justify-between gap-3">
             <div>
               <span class="font-mono-num font-bold text-xl text-ink">${p.price} ₴</span>
-              <span class="font-mono-num text-sm text-ink/40 price-old ml-1.5">${p.oldPrice} ₴</span>
+              ${oldPriceHtml}
             </div>
             <button @click="openOrder(${idx})" class="min-h-[44px] rounded-full bg-ink hover:bg-trust transition text-white font-bold text-sm px-5">
               Замовити
@@ -590,7 +599,7 @@ function app() {
       </article>`;
     },
 
-    colorIndex: [0,0,0,0,0,0],
+    colorIndex: [],
 
     setColor(idx, ci) {
       this.colorIndex[idx] = ci;
@@ -646,7 +655,135 @@ function app() {
       if (key === 'ctaPhone') this.ctaPhone = out;
     },
 
+    // --- Словник "назва кольору" -> HEX для плашки-перемикача. ---
+    // Доповнюй, якщо в фіді з'явиться колір, якого тут нема.
+    colorHexMap: {
+      'червоний': '#FF914C', 'красный': '#FF914C',
+      'жовтий': '#E0A83E', 'желтый': '#E0A83E',
+      'синій': '#00BBFF', 'синий': '#00BBFF',
+      'зелений': '#3E8E63', 'зеленый': '#3E8E63',
+      'рожевий': '#E38FA5', 'розовый': '#E38FA5',
+      'бордо': '#8B2E3C', 'бордовий': '#8B2E3C',
+      "м'ятний": '#5FB8AE', 'мятний': '#5FB8AE',
+      'сірий': '#7C8A94', 'серый': '#7C8A94',
+      'сіро-блакитний': '#8FA6B8',
+      'чорний': '#2B333A', 'черный': '#2B333A',
+      'блакитний': '#7FC9E8', 'голубой': '#7FC9E8',
+      'бірюзовий': '#3EC1C9', 'бірюзові': '#3EC1C9',
+      'графітовий': '#4A4F55',
+      'бузковий': '#B79FD1', 'сиреневый': '#B79FD1',
+      'персиковий': '#F0A97E',
+      'бежевий': '#D9C7A8',
+      'пудровий': '#E7C6C6',
+    },
+
+    hexForColor(name) {
+      const key = (name || '').trim().toLowerCase();
+      for (const [k, hex] of Object.entries(this.colorHexMap)) {
+        if (key.startsWith(k.slice(0, 4))) return hex;
+      }
+      return '#7C8A94'; // невпізнаний колір — сірий за замовчуванням
+    },
+
+    // Пробуємо витягти "колір: ..." з тексту назви (формат постачальника:
+    // "Санки-трансформер дитячі Мрія 2025, колір: графітовий").
+    splitByColorMarker(fullName) {
+      const m = fullName.match(/^(.*?),?\s*колір\s*:?\s*(.+)$/i);
+      if (!m) return null;
+      const base = m[1].trim().replace(/,$/, '').trim();
+      let color = m[2].trim();
+      color = color.split(/\s+ТМ\s+/i)[0].trim();
+      color = color.split(/\(/)[0].trim(); // прибираємо дужки типу "(лак)", "(ПОШКОДЖЕННЯ...)"
+      return { base, color };
+    },
+
+    // Фолбек: колір як прикметник у кінці назви ("SnowStar зелені").
+    stripTrailingColorWord(fullName) {
+      const roots = Object.keys(this.colorHexMap).map((c) => c.slice(0, 4));
+      const re = new RegExp('\\s+(' + roots.join('|') + ')\\p{L}*\\s*$', 'iu');
+      const stripped = fullName.replace(re, '').trim();
+      if (stripped !== fullName) {
+        return { base: stripped, color: fullName.slice(stripped.length).trim() };
+      }
+      return null;
+    },
+
+    extractVariant(name) {
+      const found = this.splitByColorMarker(name) || this.stripTrailingColorWord(name);
+      const base = found ? found.base : name;
+      let color = found ? found.color : 'Стандартний';
+      color = color.charAt(0).toUpperCase() + color.slice(1);
+      return { base, color };
+    },
+
+    // Перетворює "сирий" фід постачальника/CRM (плаский список варіантів
+    // з кольором у тексті назви) у картки з перемикачем кольору.
+    // Товари з available:false і з поміткою пошкодження в назві не показуємо.
+    transformRawFeed(rawProducts) {
+      const groups = new Map();
+      for (const p of rawProducts) {
+        if (p.available === false) continue;
+        if (/пошкодж/i.test(p.name || '')) continue;
+
+        const { base, color } = this.extractVariant(p.name || '');
+        const key = base.toLowerCase();
+
+        if (!groups.has(key)) {
+          groups.set(key, {
+            id: String(p.id ?? key),
+            name: base,
+            tagline: '',
+            desc: String(p.description || '').replace(/<[^>]+>/g, '').trim().slice(0, 220),
+            price: Number(p.price) || 0,
+            oldPrice: Number(p.price) || 0, // цей фід не містить старої ціни/знижки
+            colors: [],
+          });
+        }
+        const card = groups.get(key);
+        const price = Number(p.price) || 0;
+        if (price && price < card.price) card.price = price;
+
+        if (!card.colors.some((c) => c.name === color)) {
+          card.colors.push({
+            name: color,
+            hex: this.hexForColor(color),
+            image: p.picture || undefined,
+            seed: `${key}-${color}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
+          });
+        }
+      }
+      return Array.from(groups.values()).filter((c) => c.colors.length > 0);
+    },
+
+    async loadProducts() {
+      // products.json — фід із CRM/постачальника. Формат може бути або
+      // вже готовими картками ({colors:[...]}), або "сирим" плоским
+      // списком варіантів (available/picture/name з кольором у тексті) —
+      // в такому разі трансформуємо його в картки прямо тут.
+      // Якщо файл недоступний або пошкоджений — лишаємось на fallback-даних
+      // вище, нічого не ламається.
+      try {
+        const res = await fetch('products.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error('products.json: HTTP ' + res.status);
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) throw new Error('products.json: порожній або невалідний масив');
+
+        const looksPreGrouped = data.every((p) => Array.isArray(p.colors));
+        const parsed = looksPreGrouped ? data : this.transformRawFeed(data);
+
+        if (parsed.length === 0) throw new Error('Після обробки products.json не лишилось жодного товару в наявності');
+        this.products = parsed;
+      } catch (e) {
+        console.warn('Не вдалося підвантажити products.json, показую резервні дані:', e);
+      } finally {
+        this.colorIndex = this.products.map(() => 0);
+      }
+    },
+
     init() {
+      this.colorIndex = this.products.map(() => 0);
+      this.loadProducts();
+
       window.addEventListener('scroll', () => {
         this.showSticky = window.scrollY > 480;
       }, { passive: true });
