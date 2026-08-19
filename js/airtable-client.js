@@ -27,6 +27,21 @@ window.AirtableClient = (function () {
   }
 
   /**
+   * Airtable-поле "фото" зазвичай має тип Attachment і повертається
+   * API як масив об'єктів [{url, filename, ...}], а не рядок.
+   * Підтримуємо обидва варіанти: і Attachment-поле, і звичайний
+   * текстовий URL (якщо поле налаштоване як просте текстове поле).
+   */
+  function extractPhotoUrl(value) {
+    if (!value) return null;
+    if (typeof value === 'string') return value;
+    if (Array.isArray(value) && value.length > 0) {
+      return value[0].url || value[0].thumbnails?.large?.url || null;
+    }
+    return null;
+  }
+
+  /**
    * Нормалізує сирий запис Airtable у плоский об'єкт з дефолтами,
    * щоб решта коду не думала про record.fields.X щоразу.
    */
@@ -41,7 +56,7 @@ window.AirtableClient = (function () {
       short_description: f.short_description || '',
       description: f.description || f.short_description || '',
       video_youtube_id: f.video_youtube_id || null,
-      default_photo: f.default_photo || null,
+      default_photo: extractPhotoUrl(f.default_photo),
       seo_title: f.seo_title || f.title || 'Без назви',
       meta_description: f.meta_description || f.short_description || '',
       meta_keywords: f.meta_keywords || '',

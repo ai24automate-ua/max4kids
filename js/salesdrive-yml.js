@@ -155,6 +155,13 @@ window.SalesdriveYml = (function () {
 
     for (const offerEl of offers) {
       const offerName = text(offerEl, 'name');
+
+      // Позиції з поміткою браку/пошкодження в назві — це фото/записи
+      // для внутрішнього обліку CRM, а не товар для показу на сайті.
+      // Той самий фільтр був у попередньому клієнтському пайплайні
+      // (products.json/transformRawFeed) — переносимо його сюди.
+      if (/пошкодж/i.test(offerName)) continue;
+
       const { code: parentCode, ambiguousWith } = resolveParentCode(
         offerEl,
         offerName,
