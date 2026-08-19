@@ -8,6 +8,18 @@ export async function handler() {
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = process.env.AIRTABLE_TABLE_NAME || 'Products';
 
+  // ТИМЧАСОВА ДІАГНОСТИКА (нічого секретного не показує):
+  // довжина токена і точні значення baseId/tableName в лапках,
+  // щоб побачити приховані пробіли чи порожні змінні.
+  console.log('DEBUG env check:', {
+    tokenPresent: !!token,
+    tokenLength: token ? token.length : 0,
+    tokenStartsWithPat: token ? token.startsWith('pat') : false,
+    tokenHasWhitespace: token ? /\s/.test(token) : false,
+    baseId: JSON.stringify(baseId),
+    tableName: JSON.stringify(tableName),
+  });
+
   if (!token || !baseId) {
     return {
       statusCode: 500,
@@ -29,7 +41,7 @@ export async function handler() {
 
       if (!resp.ok) {
         const errText = await resp.text();
-        throw new Error(`Airtable ${resp.status}: ${errText}`);
+        throw new Error(`Airtable ${resp.status} for URL ${url.toString()}: ${errText}`);
       }
 
       const json = await resp.json();
