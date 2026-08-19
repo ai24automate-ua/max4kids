@@ -121,7 +121,7 @@
 
 <a href="#models" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-ink focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Перейти до моделей санок</a>
 
-<div x-data="app()" x-init="init()" x-cloak class="relative">
+<div x-data="catalogApp()" x-init="init()" x-cloak class="relative">
 
   <!-- ============ HEADER ============ -->
   <header class="sticky top-0 z-40 bg-paper/90 backdrop-blur border-b border-frost2">
@@ -245,24 +245,86 @@
         <p class="mt-2 text-ink/65">Оберіть колір і побачте, як модель виглядатиме на вашому подвір'ї.</p>
       </div>
 
-      <div class="grid sm:grid-cols-2 gap-6">
-        <template x-for="(p, idx) in products.slice(0,2)" :key="p.id">
-          <div x-html="productCardTemplate(p, idx)"></div>
+      <!-- Стан завантаження -->
+      <div x-show="loading" class="grid sm:grid-cols-2 gap-6" aria-busy="true">
+        <div class="bg-white rounded-xl2 overflow-hidden animate-pulse h-80" aria-hidden="true"></div>
+        <div class="bg-white rounded-xl2 overflow-hidden animate-pulse h-80" aria-hidden="true"></div>
+      </div>
+
+      <!-- Стан помилки -->
+      <div x-show="!loading && loadError" class="bg-white rounded-xl2 p-6 text-center">
+        <p class="text-sm text-ink/70 mb-3" x-text="loadError"></p>
+        <button @click="loadCatalog({force:true})" class="min-h-[44px] rounded-full bg-ink text-white font-semibold text-sm px-5">Спробувати ще раз</button>
+      </div>
+
+      <div x-show="!loading && !loadError" class="grid sm:grid-cols-2 gap-6">
+        <template x-for="p in featured" :key="p.parent_crm_code">
+          <article class="bg-white rounded-xl2 overflow-hidden shadow-sm hover:shadow-md transition group cursor-pointer" @click="openDetails(p)">
+            <div class="relative aspect-[4/3] overflow-hidden bg-frost2">
+              <img :src="cardImage(p)" :alt="p.title" width="640" height="480" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span x-show="p.stage === 1" class="absolute top-3 left-3 bg-trust text-white text-[11px] font-bold px-2.5 py-1 rounded-full">Очікується</span>
+              <span x-show="p.stage === 2 && oldPriceLabel(p)" class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full" x-text="activeVariant(p) ? '−' + Math.round(100 - (activeVariant(p).price / activeVariant(p).oldPrice) * 100) + '%' : ''"></span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg leading-snug" x-text="p.title"></h3>
+              <p class="text-sm text-ink/60 leading-relaxed mb-4" x-text="p.short_description"></p>
+
+              <div x-show="p.variants.length > 0" class="flex items-center gap-2 mb-4" role="group" aria-label="Оберіть колір" @click.stop>
+                <template x-for="(v, vi) in p.variants" :key="v.crmId">
+                  <button type="button" @click="selectColor(p, vi)" class="w-8 h-8 rounded-full border-2 transition" :class="(selectedVariantIdx[p.parent_crm_code] || 0) === vi ? 'border-ink scale-110' : 'border-white shadow'" :style="'background:' + v.colorHex" :aria-label="'Колір: ' + v.colorName" :aria-pressed="((selectedVariantIdx[p.parent_crm_code] || 0) === vi).toString()"></button>
+                </template>
+              </div>
+
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <span class="font-mono-num font-bold text-xl text-ink" x-text="priceLabel(p)"></span>
+                  <span x-show="oldPriceLabel(p)" class="font-mono-num text-sm text-ink/40 price-old ml-1.5" x-text="oldPriceLabel(p)"></span>
+                </div>
+                <button @click.stop="openOrder(p)" class="min-h-[44px] rounded-full transition text-white font-bold text-sm px-5" :class="p.stage === 1 ? 'bg-trust hover:bg-trust/90' : 'bg-ink hover:bg-trust'" x-text="ctaLabel(p)"></button>
+              </div>
+              <button @click.stop="openDetails(p)" class="mt-3 text-xs font-semibold text-trust underline underline-offset-2">Детальніше</button>
+            </div>
+          </article>
         </template>
       </div>
 
       <!-- Expandable extra models -->
       <div class="grid sm:grid-cols-2 gap-6 mt-6 overflow-hidden transition-all duration-500 ease-out"
-           :style="expanded ? 'max-height:3000px; opacity:1; margin-top:1.5rem' : 'max-height:0px; opacity:0; margin-top:0rem'"
+           :style="expanded ? 'max-height:6000px; opacity:1; margin-top:1.5rem' : 'max-height:0px; opacity:0; margin-top:0rem'"
            id="extra-models">
-        <template x-for="(p, idx) in products.slice(2)" :key="p.id">
-          <div x-html="productCardTemplate(p, idx+2)"></div>
+        <template x-for="p in rest" :key="p.parent_crm_code">
+          <article class="bg-white rounded-xl2 overflow-hidden shadow-sm hover:shadow-md transition group cursor-pointer" @click="openDetails(p)">
+            <div class="relative aspect-[4/3] overflow-hidden bg-frost2">
+              <img :src="cardImage(p)" :alt="p.title" width="640" height="480" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <span x-show="p.stage === 1" class="absolute top-3 left-3 bg-trust text-white text-[11px] font-bold px-2.5 py-1 rounded-full">Очікується</span>
+              <span x-show="p.stage === 2 && oldPriceLabel(p)" class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full" x-text="activeVariant(p) ? '−' + Math.round(100 - (activeVariant(p).price / activeVariant(p).oldPrice) * 100) + '%' : ''"></span>
+            </div>
+            <div class="p-5">
+              <h3 class="font-display font-700 text-lg leading-snug" x-text="p.title"></h3>
+              <p class="text-sm text-ink/60 leading-relaxed mb-4" x-text="p.short_description"></p>
+
+              <div x-show="p.variants.length > 0" class="flex items-center gap-2 mb-4" role="group" aria-label="Оберіть колір" @click.stop>
+                <template x-for="(v, vi) in p.variants" :key="v.crmId">
+                  <button type="button" @click="selectColor(p, vi)" class="w-8 h-8 rounded-full border-2 transition" :class="(selectedVariantIdx[p.parent_crm_code] || 0) === vi ? 'border-ink scale-110' : 'border-white shadow'" :style="'background:' + v.colorHex" :aria-label="'Колір: ' + v.colorName" :aria-pressed="((selectedVariantIdx[p.parent_crm_code] || 0) === vi).toString()"></button>
+                </template>
+              </div>
+
+              <div class="flex items-center justify-between gap-3">
+                <div>
+                  <span class="font-mono-num font-bold text-xl text-ink" x-text="priceLabel(p)"></span>
+                  <span x-show="oldPriceLabel(p)" class="font-mono-num text-sm text-ink/40 price-old ml-1.5" x-text="oldPriceLabel(p)"></span>
+                </div>
+                <button @click.stop="openOrder(p)" class="min-h-[44px] rounded-full transition text-white font-bold text-sm px-5" :class="p.stage === 1 ? 'bg-trust hover:bg-trust/90' : 'bg-ink hover:bg-trust'" x-text="ctaLabel(p)"></button>
+              </div>
+              <button @click.stop="openDetails(p)" class="mt-3 text-xs font-semibold text-trust underline underline-offset-2">Детальніше</button>
+            </div>
+          </article>
         </template>
       </div>
 
-      <div class="mt-8 flex justify-center">
+      <div x-show="!loading && !loadError && rest.length > 0" class="mt-8 flex justify-center">
         <button @click="toggleExpand()" class="inline-flex items-center gap-2 min-h-[44px] rounded-full bg-white border-2 border-ink/10 hover:border-trust transition font-semibold px-6 py-3 text-sm sm:text-base" :aria-expanded="expanded.toString()" aria-controls="extra-models">
-          <span x-text="expanded ? 'Сховати каталог' : 'Показати ще моделі'"></span>
+          <span x-text="expanded ? 'Сховати каталог' : 'Показати весь каталог'"></span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="transition-transform duration-300" :class="expanded ? 'rotate-180' : ''" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="#1C2B39" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
       </div>
@@ -443,10 +505,49 @@
   <div x-show="showSticky && !orderOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full" x-cloak class="fixed bottom-0 inset-x-0 z-40 sm:hidden bg-white border-t border-frost2 px-4 py-3 flex items-center gap-3" style="padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));">
     <div class="flex-1 min-w-0">
       <p class="text-xs text-ink/50 leading-tight">від</p>
-      <p class="font-mono-num font-bold text-lg leading-tight">990 ₴</p>
+      <p class="font-mono-num font-bold text-lg leading-tight" x-text="minPriceLabel()"></p>
     </div>
     <a href="#models" class="flex-1 text-center min-h-[44px] flex items-center justify-center rounded-full border-2 border-ink/15 font-semibold text-sm px-4">Каталог</a>
     <button @click="openOrder(null)" class="flex-1 min-h-[44px] rounded-full bg-action text-white font-bold text-sm px-4">Замовити</button>
+  </div>
+
+  <!-- ============ DETAILS MODAL ============ -->
+  <div x-show="detailsOpen" x-cloak class="fixed inset-0 z-50 flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="details-modal-title" @keydown.escape.window="closeDetails()">
+    <div x-show="detailsOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="absolute inset-0 bg-ink/50" @click="closeDetails()"></div>
+
+    <template x-if="detailsProduct">
+      <div x-show="detailsOpen" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-8 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0 translate-y-8 sm:scale-95" class="relative bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-xl2 p-6 sm:p-7 max-h-[92vh] overflow-y-auto">
+        <button @click="closeDetails()" aria-label="Закрити" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-frost flex items-center justify-center z-10">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#1C2B39" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+
+        <h2 id="details-modal-title" class="font-display font-700 text-xl sm:text-2xl mb-3 pr-10" x-text="detailsProduct.title"></h2>
+
+        <!-- Галерея: фото поточного варіанту (Stage 2) або default_photo (Stage 1) -->
+        <div class="grid grid-cols-3 gap-2 mb-5">
+          <template x-for="(photo, pi) in ((activeVariant(detailsProduct) && activeVariant(detailsProduct).photos.length) ? activeVariant(detailsProduct).photos : [detailsProduct.default_photo])" :key="pi">
+            <img :src="photo" :alt="detailsProduct.title + ' фото ' + (pi+1)" loading="lazy" class="w-full aspect-square object-cover rounded-lg" :class="pi === 0 ? 'col-span-3 aspect-[16/9]' : ''">
+          </template>
+        </div>
+
+        <div x-show="detailsProduct.video_youtube_id" class="mb-5 aspect-video rounded-xl overflow-hidden">
+          <iframe class="w-full h-full" :src="'https://www.youtube.com/embed/' + detailsProduct.video_youtube_id" title="Відео огляд" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <p class="text-sm text-ink/75 leading-relaxed whitespace-pre-line mb-5" x-text="detailsProduct.description"></p>
+
+        <div x-show="detailsProduct.variants.length > 0" class="flex items-center gap-2 mb-5" role="group" aria-label="Оберіть колір">
+          <template x-for="(v, vi) in detailsProduct.variants" :key="v.crmId">
+            <button type="button" @click="selectColor(detailsProduct, vi)" class="w-9 h-9 rounded-full border-2 transition" :class="(selectedVariantIdx[detailsProduct.parent_crm_code] || 0) === vi ? 'border-ink scale-110' : 'border-white shadow'" :style="'background:' + v.colorHex" :aria-label="'Колір: ' + v.colorName"></button>
+          </template>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 pt-2 border-t border-frost2">
+          <span class="font-mono-num font-bold text-2xl text-ink pt-4" x-text="priceLabel(detailsProduct)"></span>
+          <button @click="openOrder(detailsProduct)" class="mt-4 min-h-[44px] rounded-full transition text-white font-bold text-sm px-6" :class="detailsProduct.stage === 1 ? 'bg-trust hover:bg-trust/90' : 'bg-action hover:bg-actiondark'" x-text="ctaLabel(detailsProduct)"></button>
+        </div>
+      </div>
+    </template>
   </div>
 
   <!-- ============ ORDER MODAL ============ -->
@@ -458,15 +559,15 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="#1C2B39" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
 
-      <h2 id="order-modal-title" class="font-display font-700 text-xl mb-4">Оформлення замовлення</h2>
+      <h2 id="order-modal-title" class="font-display font-700 text-xl mb-4" x-text="orderMode === 'notify' ? 'Повідомити про надходження' : 'Оформлення замовлення'"></h2>
 
-      <template x-if="selectedProduct">
+      <template x-if="orderProduct">
         <div class="flex items-center gap-3 bg-frost rounded-xl p-3 mb-5">
-          <img :src="selectedImage" :alt="selectedProduct ? selectedProduct.name : ''" width="64" height="64" class="w-16 h-16 rounded-lg object-cover">
+          <img :src="cardImage(orderProduct)" :alt="orderProduct.title" width="64" height="64" class="w-16 h-16 rounded-lg object-cover">
           <div class="min-w-0">
-            <p class="font-bold text-sm truncate" x-text="selectedProduct.name"></p>
-            <p class="text-xs text-ink/55" x-text="'Колір: ' + selectedColorName"></p>
-            <p class="font-mono-num text-sm font-bold text-action" x-text="selectedProduct.price + ' ₴'"></p>
+            <p class="font-bold text-sm truncate" x-text="orderProduct.title"></p>
+            <p x-show="activeVariant(orderProduct)" class="text-xs text-ink/55" x-text="activeVariant(orderProduct) ? 'Колір: ' + activeVariant(orderProduct).colorName : ''"></p>
+            <p class="font-mono-num text-sm font-bold text-action" x-text="priceLabel(orderProduct)"></p>
           </div>
         </div>
       </template>
@@ -476,19 +577,21 @@
           <label for="order-name" class="block text-xs font-semibold text-ink/70 mb-1.5">Ім'я</label>
           <input id="order-name" type="text" x-model="form.name" required autocomplete="name" placeholder="Ваше ім'я" class="w-full min-h-[44px] rounded-xl border-2 border-ink/15 focus:border-trust px-4 py-2.5 text-sm outline-none">
         </div>
+        <div x-show="orderMode === 'notify'">
+          <label for="order-email" class="block text-xs font-semibold text-ink/70 mb-1.5">Email (необов'язково)</label>
+          <input id="order-email" type="email" x-model="form.email" autocomplete="email" placeholder="you@example.com" class="w-full min-h-[44px] rounded-xl border-2 border-ink/15 focus:border-trust px-4 py-2.5 text-sm outline-none">
+        </div>
         <div>
           <label for="order-phone" class="block text-xs font-semibold text-ink/70 mb-1.5">Телефон</label>
           <input id="order-phone" type="tel" inputmode="tel" x-model="form.phone" @input="formatPhone($event, 'phone')" required placeholder="+380 __ ___ __ __" class="w-full min-h-[44px] rounded-xl border-2 border-ink/15 focus:border-trust px-4 py-2.5 text-sm outline-none">
         </div>
-        <button type="submit" class="w-full min-h-[48px] rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white font-bold py-3.5 text-base">
-          Підтвердити замовлення
+        <button type="submit" class="w-full min-h-[48px] rounded-full bg-action hover:bg-actiondark active:scale-[0.98] transition text-white font-bold py-3.5 text-base" x-text="orderMode === 'notify' ? 'Повідомити мене' : 'Підтвердити замовлення'">
         </button>
         <p class="text-[11px] text-ink/45 text-center leading-relaxed">Натискаючи кнопку, ви погоджуєтесь на обробку персональних даних відповідно до політики конфіденційності.</p>
       </form>
 
       <template x-if="justSubmitted">
-        <div class="mt-4 rounded-xl bg-mint/60 text-trust text-sm font-semibold text-center py-3">
-          Дякуємо! Ми зателефонуємо вам найближчим часом 🎉
+        <div class="mt-4 rounded-xl bg-mint/60 text-trust text-sm font-semibold text-center py-3" x-text="orderMode === 'notify' ? 'Дякуємо! Повідомимо, щойно санки з’являться в продажу 🎉' : 'Дякуємо! Ми зателефонуємо вам найближчим часом 🎉'">
         </div>
       </template>
     </div>
@@ -504,320 +607,39 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.4/swiper-bundle.min.js"></script>
 
+<!-- Модулі каталогу: порядок важливий (config -> клієнти -> merge -> alpine-компонент) -->
+<script src="js/config.js"></script>
+<script src="js/airtable-client.js"></script>
+<script src="js/salesdrive-yml.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/app.js"></script>
+
+<!-- Анімації/слайдер не залежать від даних каталогу — ініціалізуємо окремо -->
 <script>
-function app() {
-  return {
-    expanded: false,
-    orderOpen: false,
-    showSticky: false,
-    faqOpen: null,
-    ctaPhone: '',
-    justSubmitted: false,
-    selectedProduct: null,
-    selectedColorName: '',
-    selectedImage: '',
-    form: { name: '', phone: '' },
-
-    // Fallback-дані: показуються, поки не підвантажився products.json з CRM,
-    // або якщо підвантаження не вдалося (наприклад, немає інтернету).
-    products: [
-      { id:'nordic-lux', name:'Санки з колесами Патріот', tagline:"Ручшка-штовхач знімається та регулюється", desc:"чотири гумових колеса + 2 пластмасових колеса на полозах ззаду.", price:3520, oldPrice:3999,
-        colors:[ {name:'Червоний', hex:'#D6483C', seed:'nordic-lux-red'}, {name:'Синій', hex:'#2E6E9E', seed:'nordic-lux-blue'}, {name:'Зелений', hex:'#3E8E63', seed:'nordic-lux-green'} ] },
-      { id:'snow-cruiser', name:'Санки з колесами Мрія', tagline:'Конструкція, що складається', desc:'Санки з поперечкими фарбованими планками. Ручка та спинка складаються для зручного транспортування.', price:3960, oldPrice:4200,
-        colors:[ {name:'Червоний', hex:'#D6483C', seed:'snow-cruiser-red'}, {name:'Жовтий', hex:'#E0A83E', seed:'snow-cruiser-yellow'}, {name:'Синій', hex:'#2E6E9E', seed:'snow-cruiser-blue'} ] },
-      { id:'alpin-comfort', name:'Санки пластикові Snowstar', tagline:'Вага лише 3,5 кг', desc:'Яскраві кольори та туже легка конструкці.', price:2350, oldPrice:2700,
-        colors:[ {name:'Сірий', hex:'#7C8A94', seed:'alpin-comfort-gray'}, {name:'Синій', hex:'#2E6E9E', seed:'alpin-comfort-blue'}, {name:'Червоний', hex:'#D6483C', seed:'alpin-comfort-red'} ] },
-      { id:'baby-snow', name:'Max4Kids Baby Snow', tagline:'Для малюків від 1 року', desc:"П'ятиточковий ремінь безпеки та бортики надійно фіксують малюка під час поїздки.", price:990, oldPrice:1250,
-        colors:[ {name:'Рожевий', hex:'#E38FA5', seed:'baby-snow-pink'}, {name:'Синій', hex:'#2E6E9E', seed:'baby-snow-blue'}, {name:'М\'ятний', hex:'#5FB8AE', seed:'baby-snow-mint'} ] },
-      { id:'ice-runner', name:'Max4Kids Ice Runner', tagline:'Легкі спортивні санки', desc:'Полегшена рама всього 2,5 кг — легко нести і котити, ідеально для активних дітей.', price:1090, oldPrice:1350,
-        colors:[ {name:'Чорний', hex:'#2B333A', seed:'ice-runner-black'}, {name:'Помаранчевий', hex:'#E07A3E', seed:'ice-runner-orange'}, {name:'Синій', hex:'#2E6E9E', seed:'ice-runner-blue'} ] },
-      { id:'family-xl', name:'Max4Kids Family Sledge XL', tagline:'На двох — з дитиною разом', desc:"Подовжене сидіння витримує до 120 кг — можна кататися разом із дитиною.", price:1690, oldPrice:1990,
-        colors:[ {name:'Червоний', hex:'#D6483C', seed:'family-xl-red'}, {name:'Сірий', hex:'#7C8A94', seed:'family-xl-gray'}, {name:'Зелений', hex:'#3E8E63', seed:'family-xl-green'} ] },
-    ],
-
-    faq: [
-      { q:'Скільки часу займає доставка?', a:'Зазвичай 1–3 дні по всій Україні. Відправка здійснюється Новою Поштою і лише на вантажні відділення' },
-      { q:'Чи можна оплатити при отриманні?', a:'Так, доступна оплата готівкою або карткою безпосередньо при отриманні на відділенні.' },
-      { q:'Яку вагу витримують санки?', a:'Залежно від моделі — від 50 до 120 кг. Точні дані вказані в описі кожної моделі вище.' },
-      { q:'Чи є гарантія на санки?', a:'Так, ми надаємо гарантію 24 місяці на раму та кріплення полозків.' },
-      { q:'Чи можна повернути або обміняти товар?', a:'Так, протягом 14 днів з моменту отримання за умови збереження товарного вигляду та упаковки.' },
-    ],
-
-    productImage(p, colorIdx) {
-      const c = p.colors[colorIdx];
-      // Реальне фото кольору з CRM (products.json). Якщо його нема — заглушка для дев-режиму.
-      if (c.image) return c.image;
-      return `https://picsum.photos/seed/${c.seed || p.id}/640/480`;
-    },
-
-    productCardTemplate(p, idx) {
-      const colorsHtml = p.colors.map((c, ci) => `
-        <button
-          type="button"
-          @click="setColor(${idx}, ${ci})"
-          class="w-8 h-8 rounded-full border-2 transition"
-          :class="colorIndex[${idx}] === ${ci} ? 'border-ink scale-110' : 'border-white shadow'"
-          style="background:${c.hex}"
-          aria-label="Колір: ${c.name}"
-          :aria-pressed="(colorIndex[${idx}] === ${ci}).toString()"
-        ></button>
-      `).join('');
-
-      const hasDiscount = p.oldPrice > p.price;
-      const discountBadge = hasDiscount ? `
-          <span class="absolute top-3 left-3 bg-action text-white text-[11px] font-bold px-2.5 py-1 rounded-full">
-            −${Math.round(100 - (p.price / p.oldPrice) * 100)}%
-          </span>` : '';
-      const oldPriceHtml = hasDiscount ? `<span class="font-mono-num text-sm text-ink/40 price-old ml-1.5">${p.oldPrice} ₴</span>` : '';
-
-      return `
-      <article data-product data-idx="${idx}" x-data class="bg-white rounded-xl2 overflow-hidden shadow-sm hover:shadow-md transition group">
-        <div class="relative aspect-[4/3] overflow-hidden bg-frost2">
-          <img :src="productImage(products[${idx}], colorIndex[${idx}])" alt="${p.name} — ${p.tagline}" width="640" height="480" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-          ${discountBadge}
-        </div>
-        <div class="p-5">
-          <h3 class="font-display font-700 text-lg leading-snug">${p.name}</h3>
-          <p class="text-xs text-trust font-semibold mt-0.5 mb-2">${p.tagline}</p>
-          <p class="text-sm text-ink/60 leading-relaxed mb-4">${p.desc}</p>
-
-          <div class="flex items-center gap-2 mb-4" role="group" aria-label="Оберіть колір">
-            ${colorsHtml}
-          </div>
-          <p class="text-xs text-ink/50 mb-4">Обраний колір: <span class="font-semibold text-ink/80" x-text="products[${idx}].colors[colorIndex[${idx}]].name"></span></p>
-
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <span class="font-mono-num font-bold text-xl text-ink">${p.price} ₴</span>
-              ${oldPriceHtml}
-            </div>
-            <button @click="openOrder(${idx})" class="min-h-[44px] rounded-full bg-ink hover:bg-trust transition text-white font-bold text-sm px-5">
-              Замовити
-            </button>
-          </div>
-        </div>
-      </article>`;
-    },
-
-    colorIndex: [],
-
-    setColor(idx, ci) {
-      this.colorIndex[idx] = ci;
-    },
-
-    toggleExpand() {
-      this.expanded = !this.expanded;
-      if (this.expanded) {
-        this.$nextTick(() => {
-          const el = document.getElementById('extra-models');
-          if (el && window.gsap) {
-            gsap.to(window, { duration: 0.6, scrollTo: { y: el, offsetY: 90 }, ease: 'power2.out' });
-          } else if (el) {
-            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        });
-      }
-    },
-
-    openOrder(idx) {
-      if (idx !== null) {
-        const p = this.products[idx];
-        const ci = this.colorIndex[idx];
-        this.selectedProduct = p;
-        this.selectedColorName = p.colors[ci].name;
-        this.selectedImage = this.productImage(p, ci);
-      } else {
-        this.selectedProduct = null;
-        this.selectedColorName = '';
-        this.selectedImage = '';
-      }
-      this.justSubmitted = false;
-      this.orderOpen = true;
-    },
-
-    submitOrder() {
-      // Integration point: send form + selectedProduct to CRM / Telegram bot / Google Sheet here.
-      this.justSubmitted = true;
-      setTimeout(() => { this.orderOpen = false; }, 1600);
-    },
-
-    formatPhone(e, key) {
-      let digits = e.target.value.replace(/\D/g, '');
-      if (digits.startsWith('380')) digits = digits.slice(3);
-      digits = digits.slice(0, 9);
-      let out = '+380';
-      if (digits.length > 0) out += ' ' + digits.slice(0,2);
-      if (digits.length > 2) out += ' ' + digits.slice(2,5);
-      if (digits.length > 5) out += ' ' + digits.slice(5,7);
-      if (digits.length > 7) out += ' ' + digits.slice(7,9);
-      this[key] = out;
-      if (this.form && key === 'phone') this.form.phone = out;
-      if (key === 'ctaPhone') this.ctaPhone = out;
-    },
-
-    // --- Словник "назва кольору" -> HEX для плашки-перемикача. ---
-    // Доповнюй, якщо в фіді з'явиться колір, якого тут нема.
-    colorHexMap: {
-      'червоний': '#FF914C', 'красный': '#FF914C',
-      'жовтий': '#E0A83E', 'желтый': '#E0A83E',
-      'синій': '#00BBFF', 'синий': '#00BBFF',
-      'зелений': '#3E8E63', 'зеленый': '#3E8E63',
-      'рожевий': '#E38FA5', 'розовый': '#E38FA5',
-      'бордо': '#8B2E3C', 'бордовий': '#8B2E3C',
-      "м'ятний": '#5FB8AE', 'мятний': '#5FB8AE',
-      'сірий': '#7C8A94', 'серый': '#7C8A94',
-      'сіро-блакитний': '#8FA6B8',
-      'чорний': '#2B333A', 'черный': '#2B333A',
-      'блакитний': '#7FC9E8', 'голубой': '#7FC9E8',
-      'бірюзовий': '#3EC1C9', 'бірюзові': '#3EC1C9',
-      'графітовий': '#4A4F55',
-      'бузковий': '#B79FD1', 'сиреневый': '#B79FD1',
-      'персиковий': '#F0A97E',
-      'бежевий': '#D9C7A8',
-      'пудровий': '#E7C6C6',
-    },
-
-    hexForColor(name) {
-      const key = (name || '').trim().toLowerCase();
-      for (const [k, hex] of Object.entries(this.colorHexMap)) {
-        if (key.startsWith(k.slice(0, 4))) return hex;
-      }
-      return '#7C8A94'; // невпізнаний колір — сірий за замовчуванням
-    },
-
-    // Пробуємо витягти "колір: ..." з тексту назви (формат постачальника:
-    // "Санки-трансформер дитячі Мрія 2025, колір: графітовий").
-    splitByColorMarker(fullName) {
-      const m = fullName.match(/^(.*?),?\s*колір\s*:?\s*(.+)$/i);
-      if (!m) return null;
-      const base = m[1].trim().replace(/,$/, '').trim();
-      let color = m[2].trim();
-      color = color.split(/\s+ТМ\s+/i)[0].trim();
-      color = color.split(/\(/)[0].trim(); // прибираємо дужки типу "(лак)", "(ПОШКОДЖЕННЯ...)"
-      return { base, color };
-    },
-
-    // Фолбек: колір як прикметник у кінці назви ("SnowStar зелені").
-    stripTrailingColorWord(fullName) {
-      const roots = Object.keys(this.colorHexMap).map((c) => c.slice(0, 4));
-      const re = new RegExp('\\s+(' + roots.join('|') + ')\\p{L}*\\s*$', 'iu');
-      const stripped = fullName.replace(re, '').trim();
-      if (stripped !== fullName) {
-        return { base: stripped, color: fullName.slice(stripped.length).trim() };
-      }
-      return null;
-    },
-
-    extractVariant(name) {
-      const found = this.splitByColorMarker(name) || this.stripTrailingColorWord(name);
-      const base = found ? found.base : name;
-      let color = found ? found.color : 'Стандартний';
-      color = color.charAt(0).toUpperCase() + color.slice(1);
-      return { base, color };
-    },
-
-    // Перетворює "сирий" фід постачальника/CRM (плаский список варіантів
-    // з кольором у тексті назви) у картки з перемикачем кольору.
-    // Товари з available:false і з поміткою пошкодження в назві не показуємо.
-    transformRawFeed(rawProducts) {
-      const groups = new Map();
-      for (const p of rawProducts) {
-        if (p.available === false) continue;
-        if (/пошкодж/i.test(p.name || '')) continue;
-
-        const { base, color } = this.extractVariant(p.name || '');
-        const key = base.toLowerCase();
-
-        if (!groups.has(key)) {
-          groups.set(key, {
-            id: String(p.id ?? key),
-            name: base,
-            tagline: '',
-            desc: String(p.description || '').replace(/<[^>]+>/g, '').trim().slice(0, 220),
-            price: Number(p.price) || 0,
-            oldPrice: Number(p.price) || 0, // цей фід не містить старої ціни/знижки
-            colors: [],
-          });
-        }
-        const card = groups.get(key);
-        const price = Number(p.price) || 0;
-        if (price && price < card.price) card.price = price;
-
-        if (!card.colors.some((c) => c.name === color)) {
-          card.colors.push({
-            name: color,
-            hex: this.hexForColor(color),
-            image: p.picture || undefined,
-            seed: `${key}-${color}`.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''),
-          });
-        }
-      }
-      return Array.from(groups.values()).filter((c) => c.colors.length > 0);
-    },
-
-    async loadProducts() {
-      // products.json — фід із CRM/постачальника. Формат може бути або
-      // вже готовими картками ({colors:[...]}), або "сирим" плоским
-      // списком варіантів (available/picture/name з кольором у тексті) —
-      // в такому разі трансформуємо його в картки прямо тут.
-      // Якщо файл недоступний або пошкоджений — лишаємось на fallback-даних
-      // вище, нічого не ламається.
-      try {
-        const res = await fetch('products.json', { cache: 'no-store' });
-        if (!res.ok) throw new Error('products.json: HTTP ' + res.status);
-        const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) throw new Error('products.json: порожній або невалідний масив');
-
-        const looksPreGrouped = data.every((p) => Array.isArray(p.colors));
-        const parsed = looksPreGrouped ? data : this.transformRawFeed(data);
-
-        if (parsed.length === 0) throw new Error('Після обробки products.json не лишилось жодного товару в наявності');
-        this.products = parsed;
-      } catch (e) {
-        console.warn('Не вдалося підвантажити products.json, показую резервні дані:', e);
-      } finally {
-        this.colorIndex = this.products.map(() => 0);
-      }
-    },
-
-    init() {
-      this.colorIndex = this.products.map(() => 0);
-      this.loadProducts();
-
-      window.addEventListener('scroll', () => {
-        this.showSticky = window.scrollY > 480;
-      }, { passive: true });
-
-      this.$nextTick(() => {
-        if (window.gsap && window.ScrollTrigger) {
-          gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-          document.querySelectorAll('.track-path').forEach((path) => {
-            const len = path.getTotalLength ? path.getTotalLength() : 400;
-          });
-          gsap.utils.toArray('section').forEach((sec) => {
-            gsap.from(sec.querySelectorAll('h2'), {
-              opacity: 0, y: 16, duration: 0.6, ease: 'power2.out',
-              scrollTrigger: { trigger: sec, start: 'top 82%' }
-            });
-          });
-        }
-
-        if (window.Swiper) {
-          new Swiper('.reviews-swiper', {
-            slidesPerView: 1.15,
-            spaceBetween: 16,
-            breakpoints: {
-              640: { slidesPerView: 2.2 },
-              1024: { slidesPerView: 3.2 }
-            },
-            pagination: { el: '.swiper-pagination', clickable: true },
-            a11y: { enabled: true },
-          });
-        }
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+    gsap.utils.toArray('section').forEach((sec) => {
+      gsap.from(sec.querySelectorAll('h2'), {
+        opacity: 0, y: 16, duration: 0.6, ease: 'power2.out',
+        scrollTrigger: { trigger: sec, start: 'top 82%' }
       });
-    }
+    });
   }
-}
+
+  if (window.Swiper) {
+    new Swiper('.reviews-swiper', {
+      slidesPerView: 1.15,
+      spaceBetween: 16,
+      breakpoints: {
+        640: { slidesPerView: 2.2 },
+        1024: { slidesPerView: 3.2 }
+      },
+      pagination: { el: '.swiper-pagination', clickable: true },
+      a11y: { enabled: true },
+    });
+  }
+});
 </script>
 
 </body>
