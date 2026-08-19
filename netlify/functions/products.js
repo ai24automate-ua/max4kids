@@ -3,7 +3,7 @@
  * Токен НІКОЛИ не потрапляє в браузер — читається тільки тут, з env.
  * Env-змінні задаються в Netlify UI: Site settings -> Environment variables.
  */
-exports.handler = async function () {
+export async function handler() {
   const token = process.env.AIRTABLE_TOKEN;
   const baseId = process.env.AIRTABLE_BASE_ID;
   const tableName = process.env.AIRTABLE_TABLE_NAME || 'Products';
@@ -46,4 +46,4 @@ exports.handler = async function () {
     console.error(err);
     return { statusCode: 502, body: JSON.stringify({ error: 'Airtable proxy failed' }) };
   }
-};
+}

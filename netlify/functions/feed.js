@@ -3,7 +3,7 @@
  * Качає YML на сервері Netlify, а не в браузері — так обходимо CORS,
  * бо Salesdrive не віддає заголовки, дозволені для fetch з чужого домену.
  */
-exports.handler = async function () {
+export async function handler() {
   const feedUrl = process.env.SALESDRIVE_YML_URL;
 
   if (!feedUrl) {
@@ -27,4 +27,4 @@ exports.handler = async function () {
     console.error(err);
     return { statusCode: 502, body: JSON.stringify({ error: 'YML proxy failed' }) };
   }
-};
+}
