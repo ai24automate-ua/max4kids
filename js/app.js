@@ -30,12 +30,45 @@ function catalogApp() {
       { q: 'Чи можна повернути або обміняти товар?', a: 'Так, протягом 14 днів за умови збереження товарного вигляду.' },
     ],
 
+    // Стек назв відкритих модалок ("details", "order") — потрібен, щоб
+    // апаратна/жестова кнопка "назад" на мобільному закривала модалку,
+    // а не одразу виводила користувача з сайту. Кожне відкриття модалки
+    // додає запис в історію браузера; закриття (хрестиком, тапом по
+    // фону чи Escape) виконує history.back(), а фактичне закриття
+    // модалки відбувається вже у відповідь на подію popstate — так
+    // апаратна кнопка "назад" і кнопка "×" в інтерфейсі поводяться
+    // однаково і не розсинхронізовують історію.
+    _openModals: [],
+
     async init() {
       await this.loadCatalog();
 
       window.addEventListener('scroll', () => {
         this.showSticky = window.scrollY > 480;
       }, { passive: true });
+
+      window.addEventListener('popstate', () => {
+        const name = this._openModals.pop();
+        if (name === 'details') { this.detailsOpen = false; this.resetSeo(); }
+        if (name === 'order') { this.orderOpen = false; }
+      });
+
+      // SSR-сторінка товару (/product/{slug}/) веде сюди з ?openOrder=slug
+      // або ?notify=slug — одразу відкриваємо потрібну форму для цього товару.
+      const params = new URLSearchParams(window.location.search);
+      const targetSlug = params.get('openOrder') || params.get('notify');
+      if (targetSlug) {
+        // Прибираємо параметр з адресного рядка ДО відкриття модалки:
+        // openOrder() сам додає запис в історію для кнопки "назад", і
+        // якщо чистити URL вже після цього, старий запис (з параметром)
+        // лишиться на кроці нижче — при закритті модалки через "назад"
+        // параметр повернувся б в адресний рядок і повторно спрацював
+        // би при оновленні сторінки.
+        history.replaceState({}, '', window.location.pathname);
+        const all = [...this.featured, ...this.rest];
+        const product = all.find((p) => p.slug === targetSlug);
+        if (product) this.openOrder(product);
+      }
     },
 
     async loadCatalog({ force = false } = {}) {
@@ -70,6 +103,51 @@ function catalogApp() {
       }
     },
 
+    // ---- рендер опису товару ----
+    /**
+     * Airtable Long text підтримує markdown (**жирний**, списки через "-"),
+     * але API віддає це як сирий текст із зірочками/дефісами — не готовий
+     * HTML. Конвертуємо мінімальний набір markdown-конструкцій вручну,
+     * без сторонніх бібліотек. Текст спершу екранується (escapeHtml),
+     * тому навіть якщо в Airtable колись з'явиться випадковий "<script>"
+     * у полі опису — він не виконається, а покажеться як текст.
+     */
+    escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    },
+
+    renderDescription(text) {
+      if (!text) return '';
+      const escaped = this.escapeHtml(text);
+      const lines = escaped.split(/\r?\n/);
+
+      let html = '';
+      let inList = false;
+
+      for (let rawLine of lines) {
+        const line = rawLine.trim();
+
+        if (/^[-•]\s+/.test(line)) {
+          if (!inList) { html += '<ul class="list-disc pl-5 space-y-1 my-2">'; inList = true; }
+          html += `<li>${line.replace(/^[-•]\s+/, '')}</li>`;
+          continue;
+        }
+        if (inList) { html += '</ul>'; inList = false; }
+
+        if (line === '') { html += '<div class="h-2"></div>'; continue; }
+        html += `<p class="mb-2">${line}</p>`;
+      }
+      if (inList) html += '</ul>';
+
+      // **жирний** -> <strong>жирний</strong> (після побудови списку/абзаців,
+      // щоб не заважати парсингу рядків вище)
+      html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold text-ink">$1</strong>');
+
+      return html;
+    },
+
     // ---- допоміжні геттери для картки ----
     activeVariant(p) {
       if (!p.variants.length) return null;
@@ -78,8 +156,35 @@ function catalogApp() {
     },
 
     cardImage(p) {
-      const v = this.activeVariant(p);
-      return (v && v.photos && v.photos[0]) || p.default_photo;
+      if (p.stage === 2) {
+        // Товар у наявності — показуємо тільки реальне фото з CRM.
+        // Спершу пробуємо фото активного (обраного) кольору, якщо
+        // саме в нього немає фото — шукаємо серед інших "живих"
+        // варіантів цього товару. default_photo з Airtable тут
+        // навмисно НЕ використовується — він лише для Stage 1.
+        const active = this.activeVariant(p);
+        if (active && active.photos && active.photos[0]) return active.photos[0];
+        const withPhoto = p.variants.find((v) => v.photos && v.photos[0]);
+        return withPhoto ? withPhoto.photos[0] : null;
+      }
+      // Stage 1 (товар ще очікується) — фото-заглушка з Airtable.
+      return p.default_photo;
+    },
+
+    /**
+     * Список фото для галереї в модалці "Детальніше".
+     * Stage 2: усі фото активного варіанту (якщо є), інакше не показуємо
+     * нічого — не підміняємо реальний товар фотографією з Airtable.
+     * Stage 1: default_photo, як заглушка очікуваного товару.
+     */
+    detailsGalleryPhotos(p) {
+      if (p.stage === 2) {
+        const active = this.activeVariant(p);
+        if (active && active.photos && active.photos.length) return active.photos;
+        const withPhoto = p.variants.find((v) => v.photos && v.photos.length);
+        return withPhoto ? withPhoto.photos : [];
+      }
+      return p.default_photo ? [p.default_photo] : [];
     },
 
     priceLabel(p) {
@@ -117,11 +222,22 @@ function catalogApp() {
       this.detailsProduct = p;
       this.detailsOpen = true;
       this.updateSeoForProduct(p);
+      this._openModals.push('details');
+      history.pushState({ catalogModal: 'details' }, '');
     },
 
     closeDetails() {
-      this.detailsOpen = false;
-      this.resetSeo();
+      // Якщо модалка була відкрита через openDetails() — в історії є
+      // наш запис, і history.back() коректно його "з'їсть", а фактичне
+      // закриття виконає popstate-слухач з init(). Якщо з якоїсь
+      // причини стек порожній (наприклад, модалка вже закривалась) —
+      // просто закриваємо напряму, без зайвого back().
+      if (this._openModals[this._openModals.length - 1] === 'details') {
+        history.back();
+      } else {
+        this.detailsOpen = false;
+        this.resetSeo();
+      }
     },
 
     /**
@@ -156,10 +272,16 @@ function catalogApp() {
       this.orderMode = p && p.stage === 1 ? 'notify' : 'buy';
       this.justSubmitted = false;
       this.orderOpen = true;
+      this._openModals.push('order');
+      history.pushState({ catalogModal: 'order' }, '');
     },
 
     closeOrder() {
-      this.orderOpen = false;
+      if (this._openModals[this._openModals.length - 1] === 'order') {
+        history.back();
+      } else {
+        this.orderOpen = false;
+      }
     },
 
     submitOrder() {
@@ -186,7 +308,7 @@ function catalogApp() {
       console.log('order submitted:', payload);
 
       this.justSubmitted = true;
-      setTimeout(() => { this.orderOpen = false; }, 1600);
+      setTimeout(() => { this.closeOrder(); }, 1600);
     },
 
     // ---- каталог: розгортання ----

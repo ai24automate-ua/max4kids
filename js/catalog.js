@@ -23,23 +23,37 @@ window.CatalogMerge = (function () {
         stage,
         // Абсолютний canonical відносно поточного домену — переживе переїзд домену
         canonicalUrl: `${window.location.origin}/${p.slug}`,
-        mainImage:
-          stage === 2 && liveVariants[0]?.photos?.[0]
-            ? liveVariants[0].photos[0]
-            : p.default_photo,
       };
+    });
+  }
+
+  /**
+   * Товари з ціною (Stage 2) показуємо вище за товари без ціни (Stage 1).
+   * Усередині кожної з двох груп порядок лишається таким, яким він був
+   * в Airtable (Array.prototype.sort в сучасних рушіях стабільний —
+   * елементи з однаковим пріоритетом не переставляються між собою,
+   * тому додатковий "запасний" компаратор за індексом не потрібен).
+   */
+  function sortByAvailability(products) {
+    return [...products].sort((a, b) => {
+      const priority = (p) => (p.stage === 2 ? 0 : 1);
+      return priority(a) - priority(b);
     });
   }
 
   /**
    * Розбиває каталог на "перші 4 featured" і "решту" згідно ТЗ:
    * is_featured: true, максимум 4 картки одразу, решта — у згорнутому блоці.
+   * У кожній з двох груп товари з ціною сортуються вище за товари без ціни.
    */
   function splitFeatured(products) {
     const featured = products.filter((p) => p.is_featured).slice(0, 4);
     const featuredIds = new Set(featured.map((p) => p.parent_crm_code));
     const rest = products.filter((p) => !featuredIds.has(p.parent_crm_code));
-    return { featured, rest };
+    return {
+      featured: sortByAvailability(featured),
+      rest: sortByAvailability(rest),
+    };
   }
 
   return { merge, splitFeatured };

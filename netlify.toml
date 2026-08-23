@@ -11,3 +11,23 @@
   from = "/api/feed"
   to = "/.netlify/functions/feed"
   status = 200
+
+[[redirects]]
+  from = "/product/:slug/"
+  to = "/.netlify/functions/product-page?slug=:slug"
+  status = 200
+
+[[redirects]]
+  from = "/product/:slug"
+  to = "/.netlify/functions/product-page?slug=:slug"
+  status = 200
+
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/sitemap"
+  status = 200
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/.netlify/functions/robots"
+  status = 200
