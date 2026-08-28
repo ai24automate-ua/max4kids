@@ -60,9 +60,23 @@ export async function handler(event) {
   const activeVariant = stage === 2 ? liveVariants[colorIdx] : null;
 
   const canonicalUrl = `${BRAND.siteUrl}/product/${product.slug}/`;
-  const photos = stage === 2
-    ? (activeVariant?.photos?.length ? activeVariant.photos : (liveVariants.find(v => v.photos?.length)?.photos || []))
-    : (product.default_photo ? [product.default_photo] : []);
+
+  // Якщо товар Stage 2 (є ціна/залишок), але жоден "живий" варіант з
+  // YML не приніс фото (Salesdrive іноді віддає offer без <picture>) —
+  // падаємо назад на default_photo з Airtable, а не показуємо порожню
+  // галерею. Той самий фолбек, що й у cardImage()/detailsGalleryPhotos()
+  // в js/app.js.
+  let photos;
+  if (stage === 2) {
+    if (activeVariant?.photos?.length) {
+      photos = activeVariant.photos;
+    } else {
+      const withPhoto = liveVariants.find((v) => v.photos?.length);
+      photos = withPhoto ? withPhoto.photos : (product.default_photo ? [product.default_photo] : []);
+    }
+  } else {
+    photos = product.default_photo ? [product.default_photo] : [];
+  }
 
   const priceHtml = stage === 2
     ? `${activeVariant.price} ₴${activeVariant.oldPrice ? ` <span style="text-decoration:line-through;color:#9aa5ad;font-weight:400;">${activeVariant.oldPrice} ₴</span>` : ''}`

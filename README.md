@@ -38,8 +38,9 @@ server/api-proxy-example.js    — приклад бекенд-проксі (Nod
 
 `server/api-proxy-example.js` — робочий приклад на Express, але це ілюстрація підходу, не production-готовий сервіс. В реальному деплої:
 - або постав цей самий код у Vercel/Netlify Function / Cloudflare Worker,
-- додай кешування відповіді Airtable на самому проксі (не тільки на клієнті),
-- онови `submitOrder()` у `js/app.js` — зараз він тільки логує payload у консоль, треба підключити реальний CRM/Telegram/Sheets ендпоінт.
+- додай кешування відповіді Airtable на самому проксі (не тільки на клієнті).
+
+`submitOrder()` у `js/app.js` відправляє заявку на `/api/order` (Netlify Function `netlify/functions/order.js`), який форвардить її в SalesDrive CRM через офіційний метод API "Додавання заявок" (`POST https://{домен}.salesdrive.me/handler/`). Потрібні env-змінні `SALESDRIVE_DOMAIN` і `SALESDRIVE_FORM_KEY` — див. `DEPLOY.md`.
 
 ## Важливе обмеження щодо SEO
 

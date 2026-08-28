@@ -48,11 +48,29 @@ function colorHex(colorName) {
   return CATALOG_CONFIG.COLOR_HEX_FALLBACK[key] || CATALOG_CONFIG.COLOR_HEX_DEFAULT;
 }
 
+/**
+ * Той самий фолбек, що й guessColorFromStem() у js/salesdrive-yml.js —
+ * порівнює кожне слово назви офера з основами кольорів (COLOR_NAME_STEMS),
+ * щоб покрити випадки на кшталт "SnowStar зелені" без префікса "колір:".
+ */
+function guessColorFromStem(offerName) {
+  const stems = CATALOG_CONFIG.COLOR_NAME_STEMS || {};
+  const words = (offerName || '').split(/[^\p{L}'’]+/u).filter(Boolean);
+  for (const word of words) {
+    const lower = word.toLowerCase();
+    for (const [stem, canonical] of Object.entries(stems)) {
+      if (lower.startsWith(stem)) return canonical;
+    }
+  }
+  return '';
+}
+
 function extractColorName(block, offerName) {
   const fromParam = paramValue(block, /колір|цвет|color/i);
   if (fromParam) return fromParam;
   const match = (offerName || '').match(/колір\s*:?\s*([a-zа-яіїєґ'’-]+)/i);
-  return match ? match[1] : '';
+  if (match) return match[1];
+  return guessColorFromStem(offerName);
 }
 
 function prepareParentCodes(parentCodes) {

@@ -72,6 +72,8 @@ git push -u origin main
 | `AIRTABLE_BASE_ID` | ID бази, виду `app...` (береться з URL твоєї бази Airtable) |
 | `AIRTABLE_TABLE_NAME` | назва таблиці, за замовчуванням `Products` — постав, якщо в тебе інша |
 | `SALESDRIVE_YML_URL` | публічне посилання на твій YML-фід Salesdrive |
+| `SALESDRIVE_DOMAIN` | піддомен кабінету SalesDrive, напр. `yourcompany` (без `.salesdrive.me`) |
+| `SALESDRIVE_FORM_KEY` | ключ форми з кабінету SalesDrive → Установки → Загальні налаштування і інтеграції → Інші сервіси → API → Додавання заявок — саме через нього `/api/order` створює заявки в CRM |
 
 Це і є той самий "бекенд-проксі, який тримає токен" — тільки Netlify Functions виконують цю роль замість окремого сервера. Токен звідси ніколи не потрапляє в браузер.
 

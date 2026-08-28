@@ -13,6 +13,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/order"
+  to = "/.netlify/functions/order"
+  status = 200
+
+[[redirects]]
   from = "/product/:slug/"
   to = "/.netlify/functions/product-page?slug=:slug"
   status = 200

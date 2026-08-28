@@ -17,6 +17,8 @@ function catalogApp() {
     orderMode: 'buy', // 'buy' | 'notify'
     orderProduct: null,
     justSubmitted: false,
+    orderSubmitting: false,
+    orderError: null,
     form: { name: '', phone: '', email: '' },
     ctaPhone: '',
     faqOpen: null,
@@ -157,15 +159,17 @@ function catalogApp() {
 
     cardImage(p) {
       if (p.stage === 2) {
-        // Товар у наявності — показуємо тільки реальне фото з CRM.
-        // Спершу пробуємо фото активного (обраного) кольору, якщо
-        // саме в нього немає фото — шукаємо серед інших "живих"
-        // варіантів цього товару. default_photo з Airtable тут
-        // навмисно НЕ використовується — він лише для Stage 1.
+        // Товар у наявності — спершу пробуємо фото активного (обраного)
+        // кольору, якщо саме в нього немає фото — шукаємо серед інших
+        // "живих" варіантів цього товару.
         const active = this.activeVariant(p);
         if (active && active.photos && active.photos[0]) return active.photos[0];
         const withPhoto = p.variants.find((v) => v.photos && v.photos[0]);
-        return withPhoto ? withPhoto.photos[0] : null;
+        if (withPhoto) return withPhoto.photos[0];
+        // Жоден "живий" варіант з YML не приніс фото (Salesdrive іноді
+        // віддає offer без <picture>) — показуємо заглушку з Airtable,
+        // а не порожню картку.
+        return p.default_photo || null;
       }
       // Stage 1 (товар ще очікується) — фото-заглушка з Airtable.
       return p.default_photo;
@@ -173,8 +177,9 @@ function catalogApp() {
 
     /**
      * Список фото для галереї в модалці "Детальніше".
-     * Stage 2: усі фото активного варіанту (якщо є), інакше не показуємо
-     * нічого — не підміняємо реальний товар фотографією з Airtable.
+     * Stage 2: усі фото активного варіанту, якщо є; якщо в жодного
+     * "живого" варіанту немає фото — падаємо назад на default_photo
+     * з Airtable (той самий фолбек, що й у cardImage()).
      * Stage 1: default_photo, як заглушка очікуваного товару.
      */
     detailsGalleryPhotos(p) {
@@ -182,7 +187,8 @@ function catalogApp() {
         const active = this.activeVariant(p);
         if (active && active.photos && active.photos.length) return active.photos;
         const withPhoto = p.variants.find((v) => v.photos && v.photos.length);
-        return withPhoto ? withPhoto.photos : [];
+        if (withPhoto) return withPhoto.photos;
+        return p.default_photo ? [p.default_photo] : [];
       }
       return p.default_photo ? [p.default_photo] : [];
     },
@@ -271,6 +277,7 @@ function catalogApp() {
       this.orderProduct = p || null;
       this.orderMode = p && p.stage === 1 ? 'notify' : 'buy';
       this.justSubmitted = false;
+      this.orderError = null;
       this.orderOpen = true;
       this._openModals.push('order');
       history.pushState({ catalogModal: 'order' }, '');
@@ -284,7 +291,7 @@ function catalogApp() {
       }
     },
 
-    submitOrder() {
+    async submitOrder() {
       const v = this.orderProduct ? this.activeVariant(this.orderProduct) : null;
       const payload = {
         mode: this.orderMode,
@@ -302,13 +309,29 @@ function catalogApp() {
           : null,
       };
 
-      // TODO: замінити на реальний виклик бекенду
-      // (CRM / Telegram-бот / Google Sheet). Не постити напряму
-      // в сторонні сервіси з клієнта, якщо це вимагає секретів.
-      console.log('order submitted:', payload);
+      this.orderSubmitting = true;
+      this.orderError = null;
 
-      this.justSubmitted = true;
-      setTimeout(() => { this.closeOrder(); }, 1600);
+      try {
+        // Netlify Function /api/order форвардить заявку в SalesDrive CRM
+        // через їхній офіційний API "Додавання заявок". Токен/ключ форми
+        // лишається на бекенді — сюди йде звичайний POST без секретів.
+        const res = await fetch('/api/order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) throw new Error(`order proxy responded ${res.status}`);
+
+        this.justSubmitted = true;
+        setTimeout(() => { this.closeOrder(); }, 1600);
+      } catch (err) {
+        console.error('submitOrder failed:', err);
+        this.orderError = 'Не вдалося надіслати заявку. Спробуйте ще раз або зателефонуйте нам напряму: +380 66 922 25 19.';
+      } finally {
+        this.orderSubmitting = false;
+      }
     },
 
     // ---- каталог: розгортання ----

@@ -46,11 +46,33 @@ window.SalesdriveYml = (function () {
   }
 
   /**
-   * Колір спершу шукаємо в структурованому <param>, а якщо його
-   * немає — витягуємо з тексту назви за патерном "колір: XXX"
-   * (саме так це виглядає в реальних назвах Salesdrive, напр.
-   * "...Мрія 2025 колір: рожевий рейки-рожево-ванільні ТМ Veloz" —
-   * бере лише перше слово після "колір:", решту тексту ігнорує).
+   * Фолбек, якщо в назві офера немає ні <param name="колір">, ні
+   * патерну "колір: XXX" (напр. "Санки пластикові SnowStar зелені" —
+   * колір просто останнім словом без префікса "колір:"). Порівнюємо
+   * кожне слово назви з основами кольорів (COLOR_NAME_STEMS у
+   * config.js): основа — це початок слова без урахування відмінка/роду
+   * ("зелен" покриває і "зелений", і "зелена", і "зелені"). Це не
+   * повноцінна морфологія, але для короткого списку кольорів санок
+   * цього достатньо і безпечно (перевіряємо саме початок окремого
+   * слова, а не будь-яке входження підрядка в усю назву).
+   */
+  function guessColorFromStem(offerName) {
+    const stems = window.CATALOG_CONFIG.COLOR_NAME_STEMS || {};
+    const words = (offerName || '').split(/[^\p{L}'’]+/u).filter(Boolean);
+    for (const word of words) {
+      const lower = word.toLowerCase();
+      for (const [stem, canonical] of Object.entries(stems)) {
+        if (lower.startsWith(stem)) return canonical;
+      }
+    }
+    return '';
+  }
+
+  /**
+   * Колір спершу шукаємо в структурованому <param>, потім — у тексті
+   * назви за патерном "колір: XXX", і нарешті — фолбеком по основах
+   * кольорів (guessColorFromStem), якщо жоден з двох попередніх
+   * способів нічого не дав.
    */
   function extractColorName(offerEl, offerName) {
     const params = Array.from(offerEl.querySelectorAll('param'));
@@ -60,7 +82,9 @@ window.SalesdriveYml = (function () {
     if (colorParam) return colorParam.textContent.trim();
 
     const match = (offerName || '').match(/колір\s*:?\s*([a-zа-яіїєґ'’-]+)/i);
-    return match ? match[1] : '';
+    if (match) return match[1];
+
+    return guessColorFromStem(offerName);
   }
 
   /**
