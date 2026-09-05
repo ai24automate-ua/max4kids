@@ -157,7 +157,7 @@
   },
   {
     "id": "Sa27643",
-    "available": true,
+    "available": false,
     "name": "Санки-трансформер дитячі Патріот NEW 2025 колір: бордо (лак) ТМ Veloz (ПОШКОДЖЕННЯ ЛКП НИЖНІ ПОЛОЗКИ)",
     "price": 2990,
     "currency": "UAH",
@@ -181,7 +181,7 @@
   },
   {
     "id": "Sa23286",
-    "available": true,
+    "available": false,
     "name": "Санки-трансформер дитячі Патріот NEW 2025 колір: блакитний ТМ Veloz",
     "price": 3520,
     "currency": "UAH",
@@ -829,7 +829,7 @@
   },
   {
     "id": "Sa23292",
-    "available": true,
+    "available": false,
     "name": "Санки-трансформер дитячі Патріот NEW 2025 колір: бірюзові ТМ Veloz",
     "price": 3520,
     "currency": "UAH",
@@ -889,7 +889,7 @@
   },
   {
     "id": "Sa23289",
-    "available": true,
+    "available": false,
     "name": "Санки-трансформер дитячі Патріот NEW 2025 колір: рожевий ТМ Veloz",
     "price": 3520,
     "currency": "UAH",
@@ -949,7 +949,7 @@
   },
   {
     "id": "Sa23284",
-    "available": true,
+    "available": false,
     "name": "Санки-трансформер дитячі Патріот NEW 2025 колір: червоний ТМ Veloz",
     "price": 3520,
     "currency": "UAH",
